@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>My document</title>
+</head>
+<body>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username">
+    <label for="pasword">Password:</label>
+    <input type="password" id="password">
+    <button id="createUser">Create user</button>
+   
+</body>
+
+<script>
+
+    const usernameInp = document.getElementById("username");
+    const passwordInp = document.getElementById("password");
+
+    document.getElementById("createUser").onclick = function(evt) {
+
+        if(usernameInp.value.length < 3 || passwordInp.value.length < 3){
+            alert("Brukernavn og eller passord er for kort");
+            return;
+        }
+
+        let body = {
+            username: usernameInp.value,
+            password: passwordInp.value
+        }
+        let config = {
+            method: "POST",
+            headers:{
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(body)
+        }
+        
+        fetch("/user", config).then(resp => {
+            console.log(resp.status);
+        })
+
+    }
+
+
+
+</script>
+
+</html>
