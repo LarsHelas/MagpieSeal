@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const { Router } = require('express');
 const secureEndpoints = require('./modules/secureEndpoints');
+const user = require('./modules/user')
 
 
 
@@ -20,7 +20,7 @@ server.use("/secure", secureEndpoints);
 
 
 server.post("/user", function (req, res){
-
-    res.status(200).end();
-    console.log(req.body);
+    const newUser = new user(req.body.username, req.body.password);
+    await newUser.create();
+    res.status(200).json(newUser).end();
 });
