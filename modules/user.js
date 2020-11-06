@@ -1,10 +1,14 @@
 const database = require('./dataHandler');
+const crypto = require('crypto');
+const secret = process.env.hashSecret || require ("../localenv").hashSecret;
 
 class User{
     
     constructor(username,password){
         this.username = username;
-        this.password = password; 
+        this.password = crypto.createHmac('sha256', secret)
+           .update(password)
+           .digest('hex');
         this.valid = false; 
     }
 
