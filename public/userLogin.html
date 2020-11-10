@@ -13,25 +13,16 @@
         <input type="text" id="username">
         <label for="pasword">Password:</label>
         <input type="password" id="password">
-        <button id="createUser">Create user</button>
+        <button id="loginUser">Login</button>
     </section>
    
     <p id="respTxt"></p>
-
-    <section>
-        <label for="loginUsername">Username:</label>
-        <input type="text" id="loginUsername">
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword">
-        <button id="loginUser">Login</button>
-    </section>
-
 </body>
 
 
 <script>
 
-    const usernameInp = document.getElementById("username");
+   /* const usernameInp = document.getElementById("username");
     const passwordInp = document.getElementById("password");
     const respTxt = document.getElementById("respTxt");
 
@@ -67,8 +58,7 @@
         }
     }
 
-
-
+*/
 </script>
 
 
@@ -92,7 +82,7 @@
             body: JSON.stringify(body)
         }
         
-        fetch("/user", config).then(resp => {
+        fetch("/user/login", config).then(resp => {
             console.log(resp.status);
         })
 
