@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    margin: 5px; 
+}
+
+body {
+    background-color: rgba(88, 88, 88, 0.568);
+}
+
+section {
+    display:grid; 
+    margin: 0px;
+}
+
+section>input {
+    height: 30px;
+    border: 1px solid black; 
+    border-radius: 3px;
+}
+
+section>button {
+    height: 30px; 
+    border: 1px solid rgb(146, 31, 31);
+    border-radius: 3px;
+}
+
+section>button:hover {
+    background-color: rgb(212, 212, 212);
+}
+
+
+
