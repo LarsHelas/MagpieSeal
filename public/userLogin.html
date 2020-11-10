@@ -66,11 +66,20 @@
 <script>
     let credentials = null; 
 
+    const usernameInp = document.getElementById("username");
+    const passwordInp = document.getElementById("password");
+    const respTxt = document.getElementById("respTxt");
 
-    document.getElementById("loginUser").onclick = function (evt) {
+
+    document.getElementById("loginUser").onclick = async function (evt) {
     
 
-        credentials = "Basic " + window.btoa(`${username}:${password}`);
+       // credentials = "Basic " + window.btoa(`${username}:${password}`);
+
+       let body = {
+            username: usernameInp.value,
+            password: passwordInp.value
+        }
         
         let config = {
             method: "POST",
@@ -82,9 +91,17 @@
             body: JSON.stringify(body)
         }
         
-        fetch("/user/login", config).then(resp => {
-            console.log(resp.status);
-        })
+        try {
+            let response = await fetch("/user/login", config);
+            let data = await response.json();
+            if(response.status === 200){
+                respTxt.innerHTML = "Logget inn!";
+            }
+            console.log(response.status);   
+            }
+        catch(err) {
+            respTxt.innerHTML = "Feil brukernavn og passord"
+        }
 
 }
 

@@ -17,14 +17,8 @@
     </section>
    
     <p id="respTxt"></p>
+    <a href="./userLogin.html">Login</a>
 
-    <section>
-        <label for="loginUsername">Username:</label>
-        <input type="text" id="loginUsername">
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword">
-        <button id="loginUser">Login</button>
-    </section>
 
 </body>
 
@@ -72,33 +66,6 @@
 </script>
 
 
-
-<script>
-    let credentials = null; 
-
-
-    document.getElementById("loginUser").onclick = function (evt) {
-    
-
-        credentials = "Basic " + window.btoa(`${username}:${password}`);
-        
-        let config = {
-            method: "POST",
-            headers:{
-                "content-type": "application/json",
-                "authorization": credentials
-            },
-            
-            body: JSON.stringify(body)
-        }
-        
-        fetch("/user", config).then(resp => {
-            console.log(resp.status);
-        })
-
-}
-
-</script>
 
 
 </html>

@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 //const { Router } = require('express');
 const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user')
+const userLogin = require("./modules/userLogin")
 
 
 
@@ -28,6 +29,7 @@ server.post("/user", async function (req, res){
 });
 
 server.post("/user/login", async function (req, res){
-
-    res.status(200).json(newUser).end();
+    const loginUser = new userLogin(req.body.username, req.body.password);
+    await loginUser.create();
+    res.status(200).json(loginUser).end();
 });
