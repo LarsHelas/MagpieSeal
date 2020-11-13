@@ -19,6 +19,13 @@ class User{
             console.error(error)
         }
     }
+    async login(){
+        try {
+            let response = await database.loginUser(this.username, this.password);
+        } catch (error) {
+            console.error(error)
+        }
+    }
 }
 
 module.exports= User;
