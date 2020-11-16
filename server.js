@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
 const database = require('./modules/dataHandler');
+const token = require('./modules/jwt');
 
 
 const server = express(); 
@@ -35,4 +36,8 @@ server.post("/user/login", async function (req, res){
         res.status(200).json(loginUser).end();
     }
     
+});
+
+server.post("/jwt", function (req, res){
+
 });
