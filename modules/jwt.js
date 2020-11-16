@@ -2,14 +2,20 @@ const crypto = require('crypto');
 const secret = process.env.hashSecret || require ("../localenv").hashSecret;
 
 function encode(inp){
-   let input = Buffer.from(inp, "utf-8");
-   let result = input.toString("base64");
+   let result = Buffer.from(JSON.stringify(inp)).toString('base64')
+      .replace(/=/g, "")                               
+      .replace(/\+/g, "-")                               
+      .replace(/\//g, "_");
    return result;
 }
 
-let headerValue = `{"alg":"HS256","typ":"JWT"}`
-let payloadValue = `{"username":"bob"}`;
-
+let headerValue = {
+   "alg": "HS256",
+   "typ": "JWT"
+   };
+let payloadValue = {
+   "username":"bob"
+};
 
 
 class Token{
@@ -19,18 +25,17 @@ class Token{
 
       this.payload = encode(payload);
 
-      let signatureInput = this.header + "." + this.payload;
-       this.signature = crypto.createHmac('sha256', secret)
-          .update(signatureInput)
-          .digest('hex');
-       this.valid = false; 
-      console.log(signatureInput)
-       this.sign64 = encode(signatureInput);
-       console.log(this.sign64);
+      
+      this.signature = crypto.createHmac('SHA256', secret)
+       .update(this.header + '.' + this.payload)
+       .digest('base64')
+       .replace(/=/g, "")                      
+       .replace(/\+/g, "-")                               
+       .replace(/\//g, "_")
    }
     result(){
       try {
-         let jwt = this.header+"."+this.payload+"."+this.sign64;
+         let jwt = this.header+"."+this.payload+"."+this.signature;
          return jwt;
       } catch (error) {
           console.error(error)
