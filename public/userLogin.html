@@ -72,7 +72,7 @@
 
 
     document.getElementById("loginUser").onclick = async function (evt) {
-    
+        
 
        // credentials = "Basic " + window.btoa(`${username}:${password}`);
 
@@ -94,6 +94,8 @@
         try {
             let response = await fetch("/user/login", config);
             let data = await response.json();
+            localStorage.setItem("logindata", JSON.stringify(data));
+            location.href = "./reminder.html";
             if(response.status === 200){
                 respTxt.innerHTML = "Logget inn!";
             }

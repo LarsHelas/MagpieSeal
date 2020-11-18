@@ -17,12 +17,12 @@ class StorageHandler  {
         let usernamesDB = null; 
         try {
             await client.connect();
-            usernamesDB = await client.query('SELECT * FROM users WHERE username = $1', [username])
+            usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
 
             if(usernamesDB.rows.length > 0){
             
             }else{
-            results = await client.query('INSERT INTO "public"."users"("username", "password") VALUES($1, $2) RETURNING *;', [username, password] )
+            results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password] )
             results = results.rows[0].message;
             client.end();
             }
@@ -39,8 +39,8 @@ class StorageHandler  {
         let results = null;
         try {
             await client.connect();
-            results = await client.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password])
-
+            results = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1 AND password = $2', [username, password])
+            //console.log(results.rows[0].usersId);
             if(results.rows.length > 0){
             console.log("yay") 
             }else{
@@ -52,7 +52,7 @@ class StorageHandler  {
             console.log(err);
             results = err; 
         }
-        return results;   
+        return results.rows[0].usersId;   
     }
 }
 
