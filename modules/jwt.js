@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const secret = process.env.hashSecret || require ("../localenv").hashSecret;
+const dataHandler = require("./dataHandler");
 
 function encode(inp){
    let result = Buffer.from(JSON.stringify(inp)).toString('base64')
@@ -9,13 +10,15 @@ function encode(inp){
    return result;
 }
 
-let headerValue = {
+
+
+/*let headerValue = {
    "alg": "HS256",
    "typ": "JWT"
    };
 let payloadValue = {
-   "username":"bob"
-};
+   "userId": userId
+};*/
 
 
 class Token{
@@ -42,8 +45,8 @@ class Token{
       }
   }
 }
-let test = new Token(headerValue, payloadValue)
-console.log(test.result());
+//let test = new Token(headerValue, payloadValue)
+//console.log(test.result());
 
     
     module.exports= Token;
