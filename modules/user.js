@@ -1,5 +1,6 @@
 const database = require('./dataHandler');
 const crypto = require('crypto');
+const { response } = require('express');
 const secret = process.env.hashSecret || require ("../localenv").hashSecret;
 
 class User{
@@ -22,9 +23,11 @@ class User{
     async login(){
         try {
             let response = await database.loginUser(this.username, this.password);
+            return response; 
         } catch (error) {
             console.error(error)
         }
+        
     }
 }
 
