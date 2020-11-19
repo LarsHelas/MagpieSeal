@@ -41,7 +41,7 @@ async function loadData() {
          }
          
          try {
-             let response = await fetch("/user/login", config);
+             let response = await fetch("/tasks", config);
              let data = await response.json();
 
 
@@ -49,7 +49,7 @@ async function loadData() {
              console.log(data);   
              }
          catch(err) {
-             respTxt.innerHTML = "Noe gitt galt"
+             console.log("Noe gitt galt");
         }
 }
 
