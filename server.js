@@ -52,6 +52,6 @@ server.post("/user/login", async function (req, res){
     res.status(200).json(data).end();
 });
 
-server.post("/jwt", function (req, res){
+server.post("/tasks", function (req, res){
 
 });

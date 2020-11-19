@@ -95,7 +95,7 @@
             let response = await fetch("/user/login", config);
             let data = await response.json();
             localStorage.setItem("logindata", JSON.stringify(data));
-            location.href = "./reminder.html";
+            location.href = "./tasks.html";
             if(response.status === 200){
                 respTxt.innerHTML = "Logget inn!";
             }

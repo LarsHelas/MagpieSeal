@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>My document</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header>
+<h1>Reminder:</h1>
+<p id="user"></p>
+</header>
+<hr>
+
+</body>
+
+
+<script>
+
+const user = document.getElementById("user");
+
+//Viser hvem som er logget inn
+let logindataJson = localStorage.getItem("logindata");
+let logindata = JSON.parse(logindataJson);
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai "]; 
+let randomGreet = Math.floor(Math.random()*greetings.length);
+user.innerHTML += greetings[randomGreet] + logindata.username; 
+
+
+loadData();
+async function loadData() {
+        
+ 
+         let config = {
+             method: "GET",
+             headers:{
+                 "authorization": logindata.token
+             }
+         }
+         
+         try {
+             let response = await fetch("/user/login", config);
+             let data = await response.json();
+
+
+
+             console.log(data);   
+             }
+         catch(err) {
+             respTxt.innerHTML = "Noe gitt galt"
+        }
+}
+
+</script>
+
+
+
+
+</html>
