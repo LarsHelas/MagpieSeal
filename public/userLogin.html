@@ -28,52 +28,8 @@
    
 </body>
 
-
 <script>
-
-   /* const usernameInp = document.getElementById("username");
-    const passwordInp = document.getElementById("password");
-    const respTxt = document.getElementById("respTxt");
-
-    document.getElementById("createUser").onclick = async function(evt) {
-
-        if(usernameInp.value.length < 3 || passwordInp.value.length < 3){
-            alert("Brukernavn og eller passord er for kort");
-            return;
-        }
-
-        let body = {
-            username: usernameInp.value,
-            password: passwordInp.value
-        }
-        let config = {
-            method: "POST",
-            headers:{
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(body)
-        }
-        
-        try {
-            let response = await fetch("/user", config);
-            let data = await response.json();
-            if(response.status === 200){
-                respTxt.innerHTML = "Bruker opprettet!";
-            }
-            console.log(response.status);   
-            }
-        catch(err) {
-            respTxt.innerHTML = "Noe gitt galt..."
-        }
-    }
-
-*/
-</script>
-
-
-
-<script>
-    let credentials = null; 
+    
 
     const usernameInp = document.getElementById("username");
     const passwordInp = document.getElementById("password");
@@ -82,9 +38,6 @@
 
     document.getElementById("loginUser").onclick = async function (evt) {
         
-
-       // credentials = "Basic " + window.btoa(`${username}:${password}`);
-
        let body = {
             username: usernameInp.value,
             password: passwordInp.value
@@ -94,7 +47,6 @@
             method: "POST",
             headers:{
                 "content-type": "application/json",
-                "authorization": credentials
             },
             
             body: JSON.stringify(body)
@@ -107,11 +59,12 @@
             location.href = "./tasks.html";
             if(response.status === 200){
                 respTxt.innerHTML = "Logget inn!";
-            }
-            console.log(response.status);   
+                } else if (response.status === 403){
+                respTxt.innerHTML = "Feil brukernavn og passord"
+                }
             }
         catch(err) {
-            respTxt.innerHTML = "Feil brukernavn og passord"
+            respTxt.innerHTML = "Noe gikk galt"
         }
 
 }

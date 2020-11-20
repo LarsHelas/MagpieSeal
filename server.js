@@ -2,8 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
-const database = require('./modules/dataHandler');
-const token = require('./modules/jwt');
 const Token = require('./modules/jwt');
 
 
@@ -42,14 +40,12 @@ server.post("/user/login", async function (req, res){
         "username": userLogin.username,
         "token": tokenString
     };
-    /*let test = await database.loginUser().results.rows.length;
-    console.log(test);
-    if(await test > 0){
+    
+    if(response == null){
         res.status(403).end();
     }else {
-        res.status(200).json(loginUser).end();
-    }*/
-    res.status(200).json(data).end();
+        res.status(200).json(data).end();
+    }
 });
 
 server.get("/tasks", function (req, res){

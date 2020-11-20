@@ -24,9 +24,9 @@ const user = document.getElementById("user");
 //Viser hvem som er logget inn
 let logindataJson = localStorage.getItem("logindata");
 let logindata = JSON.parse(logindataJson);
-let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai "]; 
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
 let randomGreet = Math.floor(Math.random()*greetings.length);
-user.innerHTML += greetings[randomGreet] + logindata.username; 
+user.innerHTML = greetings[randomGreet] + logindata.username; 
 
 
 loadData();
