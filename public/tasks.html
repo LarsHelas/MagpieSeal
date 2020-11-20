@@ -21,12 +21,20 @@
 
 const user = document.getElementById("user");
 
-//Viser hvem som er logget inn
+
 let logindataJson = localStorage.getItem("logindata");
+if (logindataJson === null){
+    logindataJson = '{"token":"null"}';
+}
 let logindata = JSON.parse(logindataJson);
-let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai "]; 
+let logindataString = JSON.stringify(logindata.token);
+
+//Viser hvem som er logget inn
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
 let randomGreet = Math.floor(Math.random()*greetings.length);
-user.innerHTML += greetings[randomGreet] + logindata.username; 
+user.innerHTML = greetings[randomGreet] + logindata.username; 
+
+
 
 
 loadData();
@@ -36,12 +44,12 @@ async function loadData() {
          let config = {
              method: "GET",
              headers:{
-                 "authorization": logindata.token
+                 "authorization": logindataString
              }
          }
          
          try {
-             let response = await fetch("/user/login", config);
+             let response = await fetch("/tasks", config);
              let data = await response.json();
 
 
@@ -49,7 +57,7 @@ async function loadData() {
              console.log(data);   
              }
          catch(err) {
-             respTxt.innerHTML = "Noe gitt galt"
+             console.log("Noe gitt galt");
         }
 }
 

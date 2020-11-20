@@ -2,9 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
-const database = require('./modules/dataHandler');
-const token = require('./modules/jwt');
 const Token = require('./modules/jwt');
+const TokenCheck = require('./modules/jwtTest');
 
 
 const server = express(); 
@@ -37,21 +36,27 @@ server.post("/user/login", async function (req, res){
         "userId": response
      };
     let token = new Token(headerValue, payloadValue);
-    let tokenString = token.header+"."+token.payload+"."+token.signature;
+    token.result();
+    //let tokenString = token.header+"."+token.payload+"."+token.signature;
     let data = {
         "username": userLogin.username,
-        "token": tokenString
+        "token": token
     };
-    /*let test = await database.loginUser().results.rows.length;
-    console.log(test);
-    if(await test > 0){
-        res.status(403).end();
+    
+    if(response == null){
+        res.status(401).json({msg:"Incorrect username and password"}).end();
     }else {
-        res.status(200).json(loginUser).end();
-    }*/
-    res.status(200).json(data).end();
+        res.status(200).json(data).end();
+    }
 });
 
-server.post("/tasks", function (req, res){
-
+server.get("/tasks", function (req, res){
+let token = JSON.parse(req.headers.authorization); 
+const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
+let tokenRes = tokenCheck.result();
+if (tokenRes === true){
+    res.status(200).json({msg:"Token ok"})
+}else if(tokenRes === false) {
+    res.status(403).json({msg:"Bad token"})
+}
 });

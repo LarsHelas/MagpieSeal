@@ -40,7 +40,6 @@ class StorageHandler  {
         try {
             await client.connect();
             results = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1 AND password = $2', [username, password])
-            //console.log(results.rows[0].usersId);
             if(results.rows.length > 0){
             console.log("yay") 
             }else{
@@ -52,7 +51,12 @@ class StorageHandler  {
             console.log(err);
             results = err; 
         }
-        return results.rows[0].usersId;   
+        if (results.rows.length > 0){
+            return results.rows[0].usersId;   
+        }else {
+            return null; 
+        }
+        
     }
 }
 
