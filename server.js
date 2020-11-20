@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
 const Token = require('./modules/jwt');
+const TokenCheck = require('./modules/jwtTest');
 
 
 const server = express(); 
@@ -35,10 +36,11 @@ server.post("/user/login", async function (req, res){
         "userId": response
      };
     let token = new Token(headerValue, payloadValue);
-    let tokenString = token.header+"."+token.payload+"."+token.signature;
+    token.result();
+    //let tokenString = token.header+"."+token.payload+"."+token.signature;
     let data = {
         "username": userLogin.username,
-        "token": tokenString
+        "token": token
     };
     
     if(response == null){
@@ -49,5 +51,12 @@ server.post("/user/login", async function (req, res){
 });
 
 server.get("/tasks", function (req, res){
-console.log(req.headers.authorization);
+let token = JSON.parse(req.headers.authorization); 
+const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
+let tokenRes = tokenCheck.result();
+if (tokenRes === true){
+    res.status(200).json({msg:"Token ok"})
+}else if(tokenRes === false) {
+    res.status(403).json({msg:"Bad token"})
+}
 });
