@@ -42,12 +42,12 @@ server.post("/user/login", async function (req, res){
     };
     
     if(response == null){
-        res.status(403).end();
+        res.status(401).json({msg:"Incorrect username and password"}).end();
     }else {
         res.status(200).json(data).end();
     }
 });
 
 server.get("/tasks", function (req, res){
-
+console.log(req.headers.authorization);
 });
