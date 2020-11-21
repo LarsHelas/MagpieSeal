@@ -5,6 +5,7 @@ const user = require('./modules/user');
 const Token = require('./modules/jwt');
 const TokenCheck = require('./modules/jwtTest');
 const database = require('./modules/dataHandler');
+const { use } = require('./modules/secureEndpoints');
 
 
 const server = express(); 
@@ -54,9 +55,9 @@ server.get("/tasks", async function (req, res){
     const token = JSON.parse(req.headers.authorization); 
     const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
     let tokenRes = tokenCheck.result();
-    let id = tokenCheck.payloadString(); 
+    let usersId = tokenCheck.payloadString(); 
     
-    let list = await database.listName(id);
+    let list = await database.listName(usersId);
     
     if (tokenRes === true){
         res.status(200).json(list)
@@ -66,7 +67,10 @@ server.get("/tasks", async function (req, res){
 });
 
 server.post("/tasks", async function (req, res){
-    console.log(req.body.usersId + req.body.litsGroupsId)
+    const token = JSON.parse(req.headers.authorization); 
+    const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
+    let usersId = tokenCheck.payloadString();
+
     res.status(200).json({msg:"test"}).end();
-    //await database.listAdd(req.body.id);
+    await database.listAdd(req.body.title, usersId);
 });

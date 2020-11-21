@@ -66,13 +66,13 @@ async function loadData() {
 document.getElementById("button").onclick = async function(evt) {
 
     let body = {
-        usersId: "31",
-        litsGroupsId: "3"
+        title: "test"
     }
     let config = {
         method: "POST",
         headers:{
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "authorization": logindataString
         },
         body: JSON.stringify(body)
     }

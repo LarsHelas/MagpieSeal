@@ -72,6 +72,19 @@ class StorageHandler  {
         }
         
     }
+    async listAdd(title, usersId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('INSERT INTO "public"."tLists"("listName", "usersId") VALUES($1, $2) RETURNING *;', [title, usersId] )
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }
 }
 
 
