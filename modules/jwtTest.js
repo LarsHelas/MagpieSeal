@@ -27,9 +27,14 @@ class TokenCheck{
           return false
       }
   }
+  payloadString(){
+    let result = Buffer.from(this.payload, 'base64').toString('utf-8')
+    let resultJson = JSON.parse(result)
+    let id = resultJson.userId;
+    return id; 
+  }
 }
-//let test = new Token(headerValue, payloadValue)
-//console.log(test.result());
+
 
     
     module.exports= TokenCheck;

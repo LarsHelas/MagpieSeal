@@ -40,11 +40,6 @@ class StorageHandler  {
         try {
             await client.connect();
             results = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1 AND password = $2', [username, password])
-            if(results.rows.length > 0){
-            console.log("yay") 
-            }else{
-                console.log("nay");
-            }
 
         }catch (err) {
             client.end();
@@ -53,6 +48,25 @@ class StorageHandler  {
         }
         if (results.rows.length > 0){
             return results.rows[0].usersId;   
+        }else {
+            return null; 
+        }
+        
+    }
+    async listName(id){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."usersId" = $1', [id])
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+        if (results.rows.length > 0){
+            return results.rows  
         }else {
             return null; 
         }
