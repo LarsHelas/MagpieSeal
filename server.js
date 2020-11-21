@@ -1,12 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
 const Token = require('./modules/jwt');
-const TokenCheck = require('./modules/jwtTest');
+const PayloadInfo = require('./modules/payloadInfo');
 const database = require('./modules/dataHandler');
-const { use } = require('./modules/secureEndpoints');
-
+const authenticator = require('./modules/auth');
 
 const server = express(); 
 
@@ -17,8 +15,6 @@ server.use(bodyParser.json());
 server.listen(server.get('port'), function () {
     console.log('server running', server.get('port'));
 });
-
-server.use("/secure", secureEndpoints);
 
 
 
@@ -43,7 +39,7 @@ server.post("/user/login", async function (req, res){
         "username": userLogin.username,
         "token": token
     };
-    
+
     if(response == null){
         res.status(401).json({msg:"Incorrect username and password"}).end();
     }else {
@@ -51,26 +47,25 @@ server.post("/user/login", async function (req, res){
     }
 });
 
-server.get("/tasks", async function (req, res){   
-    const token = JSON.parse(req.headers.authorization); 
-    const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
-    let tokenRes = tokenCheck.result();
-    let usersId = tokenCheck.payloadString(); 
-    
-    let list = await database.listName(usersId);
-    
-    if (tokenRes === true){
+server.get("/tasks", authenticator, async function (req, res){ 
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    const list = await database.listName(usersId);
+
+    const result = res.locals.result;
+    if (result === true){
         res.status(200).json(list)
-    }else if(tokenRes === false) {
+    }else if(result === false) {
         res.status(403).json({msg:"Bad token"})
     }
 });
 
 server.post("/tasks", async function (req, res){
-    const token = JSON.parse(req.headers.authorization); 
-    const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
-    let usersId = tokenCheck.payloadString();
-
-    res.status(200).json({msg:"test"}).end();
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
     await database.listAdd(req.body.title, usersId);
+    
+    res.status(200).json({msg:"test"}).end();
 });

@@ -25,7 +25,5 @@ class Token{
        .replace(/\//g, "_")
    }
 }
-
-
-    
+  
     module.exports= Token;
