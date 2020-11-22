@@ -69,3 +69,25 @@ server.post("/tasks", async function (req, res){
     
     res.status(200).json({msg:"test"}).end();
 });
+
+server.get("/tasks/items", authenticator, async function (req, res){ 
+
+    const result = res.locals.result;
+    if (result === true){
+        res.status(200).json({msg:"Good token"})
+    }else if(result === false) {
+        res.status(403).json({msg:"Bad token"})
+    }
+});
+
+server.post("/tasks/updateLists", async function (req, res){
+    await database.listUpdate(req.body.listTitle, req.body.listGroupsId);
+    res.status(200).json({msg:"List updated!"}).end();
+    await database.listDelete(req.body.listGroupsId);
+    res.status(200).json({msg:"List deleted!"}).end();
+});
+
+server.post("/tasks/deleteLists", async function (req, res){
+    await database.listDelete(req.body.listGroupsId);
+    res.status(200).json({msg:"List deleted!"}).end();
+});

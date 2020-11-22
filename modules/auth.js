@@ -16,7 +16,7 @@ const authenticator = (req, res, next) => {
   
   if (signature===newSignature){
       console.log("yes sirrrr")
-      res.locals.result = true;  
+      res.locals.result = true;
       next()
   }else{
       console.log("no sirrrr")

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>My document</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header>
+<h1>Reminder:</h1>
+<p id="user"></p>
+<input type="text" id="username">
+<button id="update">Update list</button>
+<button id="delete">Delete list</button>
+</header>
+<hr>
+
+</body>
+
+
+<script>
+
+const user = document.getElementById("user");
+
+
+let logindataJson = localStorage.getItem("logindata");
+if (logindataJson === null){
+    logindataJson = '{"token":"null"}';
+}
+let logindata = JSON.parse(logindataJson);
+let logindataString = JSON.stringify(logindata.token);
+
+//Viser hvem som er logget inn
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
+let randomGreet = Math.floor(Math.random()*greetings.length);
+user.innerHTML = greetings[randomGreet] + logindata.username; 
+
+
+
+
+loadData();
+async function loadData() {
+        
+ 
+         let config = {
+             method: "GET",
+             headers:{
+                 "authorization": logindataString
+             }
+         }
+         
+         try {
+             let response = await fetch("/tasks/items", config);
+             let data = await response.json();
+
+
+
+             console.log(data);   
+             }
+         catch(err) {
+             console.log("Noe gitt galt");
+        }
+}
+
+
+document.getElementById("update").onclick = async function(evt) {
+
+    let body = {
+        listTitle: "updated",
+        listGroupsId: 5
+    }
+    let config = {
+        method: "POST",
+        headers:{
+            "content-type": "application/json",
+        },
+        body: JSON.stringify(body)
+    }
+    
+    try {
+        let response = await fetch("/tasks/updateLists", config);
+        let data = await response.json();
+        
+        console.log(data);   
+        }
+    catch(err) {
+        console.log("Noe gitt galt...")
+    }
+}
+
+document.getElementById("delete").onclick = async function(evt) {
+
+let body = {
+    listGroupsId: 6
+}
+let config = {
+    method: "POST",
+    headers:{
+        "content-type": "application/json",
+    },
+    body: JSON.stringify(body)
+}
+
+try {
+    let response = await fetch("/tasks/deleteLists", config);
+    let data = await response.json();
+    
+    console.log(data);   
+    }
+catch(err) {
+    console.log("Noe gitt galt...")
+}
+}
+</script>
+
+
+
+
+</html>

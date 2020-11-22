@@ -85,6 +85,32 @@ class StorageHandler  {
             results = err; 
         }
     }
+    async listUpdate(title, listGroupsId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('UPDATE "public"."tLists" SET "listName" = $1 WHERE "listGroupsId" = $2', [title, listGroupsId] )
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }  
+    async listDelete(listGroupsId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1', [listGroupsId])
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }  
 }
 
 
