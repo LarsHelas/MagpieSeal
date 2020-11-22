@@ -10,11 +10,27 @@
 
 <header>
 <h1>Reminder:</h1>
-<p id="user"></p>
+
+
+
+<div class="dropdown">
+    <button id="user" class="dropbtn"></button>
+    <div class="dropdown-content">
+     <button onclick="logout()">Logout</button>
+     <button id="update user">Update user</button>
+    </div>
+</div>
+
+
+
+
 <input type="text" id="username">
 <button id="button">New list</button>
+
 </header>
 <hr>
+
+
 
 </body>
 
@@ -36,7 +52,10 @@ let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", 
 let randomGreet = Math.floor(Math.random()*greetings.length);
 user.innerHTML = greetings[randomGreet] + logindata.username; 
 
-
+function logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
 
 loadData();
@@ -64,6 +83,10 @@ async function loadData() {
 }
 
 
+
+
+
+
 document.getElementById("button").onclick = async function(evt) {
 
     let body = {
@@ -88,6 +111,7 @@ document.getElementById("button").onclick = async function(evt) {
         console.log("Noe gitt galt...")
     }
 }
+
 </script>
 
 
