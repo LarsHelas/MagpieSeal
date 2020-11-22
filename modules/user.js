@@ -27,8 +27,14 @@ class User{
         } catch (error) {
             console.error(error)
         }
-        
     }
+    async updatePassword(){
+        try {
+            let response = await database.updatePassword(this.password, this.username);
+        } catch (error) {
+            console.error(error)
+        }
+    } 
 }
 
 module.exports= User;

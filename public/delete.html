@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>My document</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header>
+<h1>Reminder:</h1>
+
+
+
+<div class="dropdown">
+    <button id="user" class="dropbtn"></button>
+    <div class="dropdown-content">
+     <button onclick="logout()">Logout</button>
+     <button id="update user">Update user</button>
+    </div>
+</div>
+
+
+
+
+<input type="text" id="username">
+<button id="button">New list</button>
+
+</header>
+<hr>
+
+
+
+</body>
+
+
+<script>
+
+const user = document.getElementById("user");
+
+
+let logindataJson = localStorage.getItem("logindata");
+if (logindataJson === null){
+    logindataJson = '{"token":"null"}';
+}
+let logindata = JSON.parse(logindataJson);
+let logindataString = JSON.stringify(logindata.token);
+
+//Viser hvem som er logget inn
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
+let randomGreet = Math.floor(Math.random()*greetings.length);
+user.innerHTML = greetings[randomGreet] + logindata.username; 
+
+
+
+
+
+
+
+
+document.getElementById("button").onclick = async function(evt) {
+
+    let body = {
+        title: "test"
+    }
+    let config = {
+        method: "POST",
+        headers:{
+            "content-type": "application/json",
+            "authorization": logindataString
+        },
+        body: JSON.stringify(body)
+    }
+    
+    try {
+        let response = await fetch("/user/deleteUser", config);
+        let data = await response.json();
+        
+        console.log(data);   
+        }
+    catch(err) {
+        console.log("Noe gitt galt...")
+    }
+}
+
+</script>
+
+
+
+
+</html>

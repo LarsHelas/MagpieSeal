@@ -47,6 +47,31 @@ server.post("/user/login", async function (req, res){
     }
 });
 
+server.post("/user/updateUsername", async function (req, res){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.updateUser(req.body.username, usersId);
+    res.status(200).json({msg:"Username updated"}).end();
+});
+
+server.post("/user/updatePassword", async function (req, res){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    const newUser = new user(usersId, req.body.password);
+    await newUser.updatePassword();
+    res.status(200).json({msg:"Password updated"}).end();
+});
+
+server.post("/user/deleteUser", async function (req, res){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.deleteUser(usersId); 
+    res.status(200).json({msg:"User yeeted"}).end();
+});
+
 server.get("/tasks", authenticator, async function (req, res){ 
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
@@ -83,8 +108,6 @@ server.get("/tasks/items", authenticator, async function (req, res){
 server.post("/tasks/updateLists", async function (req, res){
     await database.listUpdate(req.body.listTitle, req.body.listGroupsId);
     res.status(200).json({msg:"List updated!"}).end();
-    await database.listDelete(req.body.listGroupsId);
-    res.status(200).json({msg:"List deleted!"}).end();
 });
 
 server.post("/tasks/deleteLists", async function (req, res){
