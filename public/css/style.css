@@ -84,7 +84,9 @@ section-a > h1 {
 
 .dropdown {
     position: relative;
-    display: inline-block;
+    float: right;
+    margin-right: 40px;
+    margin-top: -40px; 
 }
 
 .dropdown-content {

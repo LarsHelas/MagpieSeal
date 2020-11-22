@@ -13,13 +13,13 @@
 
 
 <div class="dropdown">
-    <button id="user" class="dropbtn">Dropdown</button>
+    <button id="user" class="dropbtn"></button>
     <div class="dropdown-content">
-     <button id="logout">Logout</button>
-     <button id="delete">Delete user</button>
-     <button id="change">Change username</button>
+     <button onclick="logout()">Logout</button>
+     <button id="update user">Update user</button>
     </div>
 </div>
+
 
 </header>
 <hr>
@@ -64,6 +64,12 @@ async function loadData() {
              console.log("Noe gitt galt");
         }
 }
+
+
+function logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
 </script>
 
