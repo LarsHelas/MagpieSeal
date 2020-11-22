@@ -40,20 +40,77 @@ class StorageHandler  {
         try {
             await client.connect();
             results = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1 AND password = $2', [username, password])
-            //console.log(results.rows[0].usersId);
-            if(results.rows.length > 0){
-            console.log("yay") 
-            }else{
-                console.log("nay");
-            }
 
         }catch (err) {
             client.end();
             console.log(err);
             results = err; 
         }
-        return results.rows[0].usersId;   
+        if (results.rows.length > 0){
+            return results.rows[0].usersId;   
+        }else {
+            return null; 
+        }
+        
     }
+    async listName(id){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."usersId" = $1', [id])
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+        if (results.rows.length > 0){
+            return results.rows  
+        }else {
+            return null; 
+        }
+        
+    }
+    async listAdd(title, usersId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('INSERT INTO "public"."tLists"("listName", "usersId") VALUES($1, $2) RETURNING *;', [title, usersId] )
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }
+    async listUpdate(title, listGroupsId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('UPDATE "public"."tLists" SET "listName" = $1 WHERE "listGroupsId" = $2', [title, listGroupsId] )
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }  
+    async listDelete(listGroupsId){
+        const client = new pg.Client(this.credentials);
+        let results = null;
+        try {
+            await client.connect();
+            results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1', [listGroupsId])
+
+        }catch (err) {
+            client.end();
+            console.log(err);
+            results = err; 
+        }
+    }  
 }
 
 

@@ -1,21 +1,29 @@
+const crypto = require('crypto');
+const secret = process.env.hashSecret || require ("../localenv").hashSecret;
+
+
 const authenticator = (req, res, next) => {
-    if(!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1){
-      return res.append("WWW-Authenticate", 'Basic realm="User Visible Realm", charset="UTF-8"').status(401).end()
-    }
+  const token = JSON.parse(req.headers.authorization); 
+  const header = token.header;
+  const payload = token.payload;
+  const signature = token.signature; 
+  const newSignature = crypto.createHmac('SHA256', secret)
+  .update(header + '.' + payload)
+  .digest('base64')
+  .replace(/=/g, "")                      
+  .replace(/\+/g, "-")                               
+  .replace(/\//g, "_")
   
-      const credentials = req.headers.authorization.split(' ')[1];
-      const [username, password] = Buffer.from(credentials, 'base64').toString('utf-8').split(":"); 
-
-      const user = authenticate(username, password);
-     //if else med brukernavn og passord i hver sin if setning? 
-      if (user){
-          return res.status(403).end();
-      }
-      next();
+  if (signature===newSignature){
+      console.log("yes sirrrr")
+      res.locals.result = true;
+      next()
+  }else{
+      console.log("no sirrrr")
+      res.locals.result = false;
+      next()
   }
 
-  function authenticate(username, password){
-    return (username !== "kalleklovn" && password !== "rød nese")
-  }
+}
 
   module.exports = authenticator; 

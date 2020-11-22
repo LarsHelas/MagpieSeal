@@ -57,10 +57,10 @@
             let response = await fetch("/user/login", config);
             let data = await response.json();
             localStorage.setItem("logindata", JSON.stringify(data));
-            location.href = "./tasks.html";
             if(response.status === 200){
+                location.href = "./tasks.html";
                 respTxt.innerHTML = "Logget inn!";
-                } else if (response.status === 403){
+                } else if (response.status === 401){
                 respTxt.innerHTML = "Feil brukernavn og passord"
                 }
             }
