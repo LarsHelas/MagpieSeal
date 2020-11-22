@@ -96,20 +96,25 @@ class StorageHandler {
             userLists.rows.forEach(row => {
                 groupIDs.push(row.listGroupsId)
             });
-
+            if(groupIDs>0){
             let listQuery = ''.concat('SELECT * FROM "tItems" WHERE "listGroupsId" IN (', groupIDs.toString(), ')'); // .ToString concats array values with comma - perfect for SQL :)
             userItems = await client.query(listQuery);
+            
             userItems.rows.forEach(row => {
                 itemIDs.push(row.listItemsId)
             });
-
+            }
             // Delete all items
+            
+            if(itemIDs>0){
             let itemDeleteQuery = ''.concat('DELETE FROM "public"."tItems" WHERE "listItemsId" IN (', itemIDs.toString(), ')');
             deleteItems = await client.query(itemDeleteQuery);
-
+            }
             // Delete lists
+            
+            if(groupIDs>0){
             deleteLists = await client.query('DELETE FROM "tLists" WHERE "usersId"= $1', [usersId]);
-
+            }
             // Destroy user
             deleteUser = await client.query('DELETE FROM "public"."tUsers" WHERE "usersId" = $1', [usersId]);
 
