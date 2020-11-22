@@ -12,7 +12,8 @@
 <h1>Reminder:</h1>
 <p id="user"></p>
 <input type="text" id="username">
-<button id="button">New list</button>
+<button id="update">Update list</button>
+<button id="delete">Delete list</button>
 </header>
 <hr>
 
@@ -51,7 +52,7 @@ async function loadData() {
          }
          
          try {
-             let response = await fetch("/tasks", config);
+             let response = await fetch("/tasks/items", config);
              let data = await response.json();
 
 
@@ -64,22 +65,22 @@ async function loadData() {
 }
 
 
-document.getElementById("button").onclick = async function(evt) {
+document.getElementById("update").onclick = async function(evt) {
 
     let body = {
-        title: "test"
+        listTitle: "updated",
+        listGroupsId: 5
     }
     let config = {
         method: "POST",
         headers:{
             "content-type": "application/json",
-            "authorization": logindataString
         },
         body: JSON.stringify(body)
     }
     
     try {
-        let response = await fetch("/tasks", config);
+        let response = await fetch("/tasks/updateLists", config);
         let data = await response.json();
         
         console.log(data);   
@@ -87,6 +88,30 @@ document.getElementById("button").onclick = async function(evt) {
     catch(err) {
         console.log("Noe gitt galt...")
     }
+}
+
+document.getElementById("delete").onclick = async function(evt) {
+
+let body = {
+    listGroupsId: 6
+}
+let config = {
+    method: "POST",
+    headers:{
+        "content-type": "application/json",
+    },
+    body: JSON.stringify(body)
+}
+
+try {
+    let response = await fetch("/tasks/deleteLists", config);
+    let data = await response.json();
+    
+    console.log(data);   
+    }
+catch(err) {
+    console.log("Noe gitt galt...")
+}
 }
 </script>
 

@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const secureEndpoints = require('./modules/secureEndpoints');
 const user = require('./modules/user');
 const Token = require('./modules/jwt');
-const TokenCheck = require('./modules/jwtTest');
-
+const PayloadInfo = require('./modules/payloadInfo');
+const database = require('./modules/dataHandler');
+const authenticator = require('./modules/auth');
 
 const server = express(); 
 
@@ -16,7 +16,6 @@ server.listen(server.get('port'), function () {
     console.log('server running', server.get('port'));
 });
 
-server.use("/secure", secureEndpoints);
 
 
 server.post("/user", async function (req, res){
@@ -36,13 +35,11 @@ server.post("/user/login", async function (req, res){
         "userId": response
      };
     let token = new Token(headerValue, payloadValue);
-    token.result();
-    //let tokenString = token.header+"."+token.payload+"."+token.signature;
     let data = {
         "username": userLogin.username,
         "token": token
     };
-    
+
     if(response == null){
         res.status(401).json({msg:"Incorrect username and password"}).end();
     }else {
@@ -50,13 +47,47 @@ server.post("/user/login", async function (req, res){
     }
 });
 
-server.get("/tasks", function (req, res){
-let token = JSON.parse(req.headers.authorization); 
-const tokenCheck = new TokenCheck(token.header,token.payload,token.signature)
-let tokenRes = tokenCheck.result();
-if (tokenRes === true){
-    res.status(200).json({msg:"Token ok"})
-}else if(tokenRes === false) {
-    res.status(403).json({msg:"Bad token"})
-}
+server.get("/tasks", authenticator, async function (req, res){ 
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    const list = await database.listName(usersId);
+
+    const result = res.locals.result;
+    if (result === true){
+        res.status(200).json(list)
+    }else if(result === false) {
+        res.status(403).json({msg:"Bad token"})
+    }
+});
+
+server.post("/tasks", async function (req, res){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listAdd(req.body.title, usersId);
+    
+    res.status(200).json({msg:"test"}).end();
+});
+
+server.get("/tasks/items", authenticator, async function (req, res){ 
+
+    const result = res.locals.result;
+    if (result === true){
+        res.status(200).json({msg:"Good token"})
+    }else if(result === false) {
+        res.status(403).json({msg:"Bad token"})
+    }
+});
+
+server.post("/tasks/updateLists", async function (req, res){
+    await database.listUpdate(req.body.listTitle, req.body.listGroupsId);
+    res.status(200).json({msg:"List updated!"}).end();
+    await database.listDelete(req.body.listGroupsId);
+    res.status(200).json({msg:"List deleted!"}).end();
+});
+
+server.post("/tasks/deleteLists", async function (req, res){
+    await database.listDelete(req.body.listGroupsId);
+    res.status(200).json({msg:"List deleted!"}).end();
 });
