@@ -16,6 +16,7 @@ class User{
     async create(){
         try {
             let response = await database.insertUser(this.username, this.password);
+            return response; 
         } catch (error) {
             console.error(error)
         }
@@ -27,8 +28,14 @@ class User{
         } catch (error) {
             console.error(error)
         }
-        
     }
+    async updatePassword(){
+        try {
+            let response = await database.updatePassword(this.password, this.username);
+        } catch (error) {
+            console.error(error)
+        }
+    } 
 }
 
 module.exports= User;
