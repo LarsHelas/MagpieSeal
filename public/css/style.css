@@ -120,7 +120,33 @@ section-a > h1 {
     background-color: lightcoral;
 }
 
+/*update user*/
 
+.update {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+#delete {
+    grid-row-start: 4;
+    grid-row-end: 4;
+}
+
+.update>button {
+    background-color: darkred;
+    color: white;
+    border: 1px solid darkred;
+    border-radius: 3px;
+}
+
+.update>button:hover {
+    background-color: lightcoral;
+}
+
+.update>input {
+    border: 1px solid lightgrey; 
+    border-radius: 3px;
+}
 
 
 
@@ -139,5 +165,18 @@ section-a > h1 {
         margin-left: -190px;
         margin-top: -190px;
         margin-bottom: 20px;
+    }
+}
+
+@media (min-width: 700px) {
+    .update {
+        margin:auto;
+        width: 380px;
+        height: 150px;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        margin-left: -190px;
+      
     }
 }
