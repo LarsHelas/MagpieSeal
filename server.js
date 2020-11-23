@@ -17,11 +17,16 @@ server.listen(server.get('port'), function () {
 });
 
 
-
+//Users
 server.post("/user", async function (req, res){
     const newUser = new user(req.body.username, req.body.password);
     await newUser.create();
-    res.status(200).json(newUser).end();
+    if (response == null) {
+        res.status(400).json({msg:"Username already exists"}).end();
+    }else {
+        res.status(200).json({msg:"Ok"}).end();
+    }
+    
 });
 
 server.post("/user/login", async function (req, res){
@@ -47,70 +52,160 @@ server.post("/user/login", async function (req, res){
     }
 });
 
-server.post("/user/updateUsername", async function (req, res){
+server.post("/user/updateUsername", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
     await database.updateUser(req.body.username, usersId);
     res.status(200).json({msg:"Username updated"}).end();
+    }
 });
 
-server.post("/user/updatePassword", async function (req, res){
+server.post("/user/updatePassword", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
     const newUser = new user(usersId, req.body.password);
     await newUser.updatePassword();
     res.status(200).json({msg:"Password updated"}).end();
+    }
 });
 
-server.post("/user/deleteUser", async function (req, res){
+server.post("/user/deleteUser", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
     await database.deleteUser(usersId); 
     res.status(200).json({msg:"User yeeted"}).end();
+    }
 });
 
+//Lists
 server.get("/tasks", authenticator, async function (req, res){ 
-    const token = JSON.parse(req.headers.authorization);
-    const payload = new PayloadInfo(token.payload)  
-    const usersId = payload.id();
-    const list = await database.listName(usersId);
-
     const result = res.locals.result;
     if (result === true){
+        const token = JSON.parse(req.headers.authorization);
+        const payload = new PayloadInfo(token.payload)  
+        const usersId = payload.id();
+        const list = await database.listName(usersId);
         res.status(200).json(list)
     }else if(result === false) {
         res.status(403).json({msg:"Bad token"})
     }
 });
 
-server.post("/tasks", async function (req, res){
+server.post("/tasks", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
     await database.listAdd(req.body.title, usersId);
     
     res.status(200).json({msg:"test"}).end();
+    }
 });
 
-server.get("/tasks/items", authenticator, async function (req, res){ 
+server.post("/tasks/updateLists", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listUpdate(req.body.listTitle, req.body.listGroupsId, usersId);
+    res.status(200).json({msg:"List updated!"}).end();
+    }
+});
 
+server.post("/tasks/deleteLists", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listDelete(req.body.listGroupsId, usersId);
+    res.status(200).json({msg:"List deleted!"}).end();
+    }
+});
+
+//List items
+server.get("/tasks/items", authenticator, async function (req, res){ 
     const result = res.locals.result;
     if (result === true){
-        res.status(200).json({msg:"Good token"})
+        const list = await database.listItemsName(req.body.listGroupsId);
+        res.status(200).json(list)
     }else if(result === false) {
         res.status(403).json({msg:"Bad token"})
     }
 });
 
-server.post("/tasks/updateLists", async function (req, res){
-    await database.listUpdate(req.body.listTitle, req.body.listGroupsId);
-    res.status(200).json({msg:"List updated!"}).end();
+server.post("/tasks/items", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listItemAdd(req.body.itemName, req.body.listGroupsId, usersId);
+    res.status(200).json({msg:"ok"}).end();
+    }
 });
 
-server.post("/tasks/deleteLists", async function (req, res){
-    await database.listDelete(req.body.listGroupsId);
+server.post("/tasks/updateListItems", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listItemUpdate(req.body.itemName, req.body.listItemsId, usersId);
+    res.status(200).json({msg:"List updated!"}).end();
+    }
+});
+
+server.post("/tasks/deleteListItems", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    await database.listItemDelete(req.body.listItemsId, usersId);
     res.status(200).json({msg:"List deleted!"}).end();
+    }
+});
+
+server.post("/tasks/deleteListItems", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+    const token = JSON.parse(req.headers.authorization);
+    const payload = new PayloadInfo(token.payload)  
+    const usersId = payload.id();
+    const result = await database.listItemDelete(req.body.listGroupsId, usersId);
+    res.status(200).json(result).end();
+    }
+});
+
+//private/public
+server.get("/public", authenticator, async function (req, res){ 
+    const result = res.locals.result;
+    if (result === true){
+        const list = await database.publicLists();
+        res.status(200).json(list)
+    }else if(result === false) {
+        res.status(403).json({msg:"Bad token"})
+    }
+});
+
+server.get("/public/tasks", authenticator, async function (req, res){ 
+    const result = res.locals.result;
+    if (result === true){
+        const list = await database.publicListItems(req.body.listGroupsId);
+        res.status(200).json(list)
+    }else if(result === false) {
+        res.status(403).json({msg:"Bad token"})
+    }
 });
