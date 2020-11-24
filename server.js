@@ -52,7 +52,7 @@ server.post("/user/login", async function (req, res){
     }
 });
 
-server.post("/user/updateUsername", authenticator, async function (req, res){
+server.put("/user/updateUsername", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -63,7 +63,7 @@ server.post("/user/updateUsername", authenticator, async function (req, res){
     }
 });
 
-server.post("/user/updatePassword", authenticator, async function (req, res){
+server.put("/user/updatePassword", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -75,7 +75,7 @@ server.post("/user/updatePassword", authenticator, async function (req, res){
     }
 });
 
-server.post("/user/deleteUser", authenticator, async function (req, res){
+server.delete("/user/deleteUser", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -112,7 +112,7 @@ server.post("/tasks", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/updateLists", authenticator, async function (req, res){
+server.put("/tasks/updateLists", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -123,7 +123,7 @@ server.post("/tasks/updateLists", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/deleteLists", authenticator, async function (req, res){
+server.delete("/tasks/deleteLists", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -156,7 +156,7 @@ server.post("/tasks/items", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/updateListItems", authenticator, async function (req, res){
+server.put("/tasks/updateListItems", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -178,7 +178,7 @@ server.post("/tasks/deleteListItems", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/deleteListItems", authenticator, async function (req, res){
+server.delete("/tasks/deleteListItems", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
