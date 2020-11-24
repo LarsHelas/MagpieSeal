@@ -23,8 +23,8 @@ class StorageHandler {
                 return false; 
             } else {
                 results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password])
-
                 client.end();
+                return results; 
             }
 
         } catch (err) {

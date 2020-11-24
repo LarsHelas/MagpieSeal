@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>My document</title>
+    <title>Update user</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
@@ -35,6 +35,21 @@
     </body>
 
 <script>
+
+const user = document.getElementById("user");
+
+let logindataJson = localStorage.getItem("logindata");
+if (logindataJson === null){
+    logindataJson = '{"token":"null"}';
+}
+let logindata = JSON.parse(logindataJson);
+let logindataString = JSON.stringify(logindata.token);
+
+//Viser hvem som er logget inn
+let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
+let randomGreet = Math.floor(Math.random()*greetings.length);
+user.innerHTML = greetings[randomGreet] + logindata.username; 
+
 
 function list() {
     location.href = "./tasks.html";

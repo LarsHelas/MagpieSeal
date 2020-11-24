@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <title>My document</title>
     <link rel="stylesheet" href="./css/style.css">
+    
 </head>
 <body>
 
@@ -19,11 +20,11 @@
         <input type="text" id="username">
         <label for="pasword">Password:</label>
         <input type="password" id="password">
+        <p id="respTxt"></p>
         <button id="createUser">Create user</button>
     </section>
 
    
-    <p id="respTxt"></p>
     <a href="./userLogin.html">or login on existing user</a>
 </div>
 
@@ -39,8 +40,8 @@
 
     document.getElementById("createUser").onclick = async function(evt) {
 
-        if(usernameInp.value.length < 3 || passwordInp.value.length < 3){
-            alert("Brukernavn og eller passord er for kort");
+        if(usernameInp.value.length < 3 || passwordInp.value.length < 6){
+            alert("Username must be at least 3 characters long and password 6.");
             return;
         }
 
@@ -60,13 +61,15 @@
             let response = await fetch("/user", config);
             let data = await response.json();
             if(response.status === 200){
-                respTxt.innerHTML = "Bruker opprettet!";
+                respTxt.innerHTML = "User created";
                 location.href = "./userLogin.html";
+            }else if(response.status === 400){
+                respTxt.innerHTML = "Username already exists";
             }
             console.log(response.status);   
             }
         catch(err) {
-            respTxt.innerHTML = "Noe gitt galt..."
+            respTxt.innerHTML = "Something went wrong. Please try again."
         }
     }
 

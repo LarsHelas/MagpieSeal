@@ -10,10 +10,18 @@
 
 <header>
 <h1>Reminder:</h1>
-<p id="user"></p>
 <input type="text" id="username">
-<button id="update">Update list</button>
-<button id="delete">Delete list</button>
+<button id="updateList">Update list</button>
+<button id="deleteList">Delete list</button>
+
+<div class="dropdown">
+    <button id="user" class="dropbtn"></button>
+    <div class="dropdown-content">
+     <button onclick="logout()">Logout</button>
+     <button onclick="updateuUser()">Update user</button>
+    </div>
+</div>
+
 </header>
 <hr>
 
@@ -39,11 +47,9 @@ user.innerHTML = greetings[randomGreet] + logindata.username;
 
 
 
-
+//henter inn lis items 
 loadData();
 async function loadData() {
-        
- 
          let config = {
              method: "GET",
              headers:{
@@ -64,15 +70,15 @@ async function loadData() {
         }
 }
 
-
-document.getElementById("update").onclick = async function(evt) {
+//oppdatere lister
+document.getElementById("updateList").onclick = async function(evt) {
 
     let body = {
         listTitle: "updated",
         listGroupsId: 5
     }
     let config = {
-        method: "POST",
+        method: "PUT",
         headers:{
             "content-type": "application/json",
         },
@@ -90,7 +96,8 @@ document.getElementById("update").onclick = async function(evt) {
     }
 }
 
-document.getElementById("delete").onclick = async function(evt) {
+//slette lister
+document.getElementById("deleteList").onclick = async function(evt) {
 
 let body = {
     listGroupsId: 6

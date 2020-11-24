@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>My document</title>
+    <title>Tasks</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
 <header>
-<h1>Reminder:</h1>
-
-
+<h1>Task planner</h1>
 
 <div class="dropdown">
     <button id="user" class="dropbtn"></button>
@@ -21,13 +19,10 @@
     </div>
 </div>
 
-
-
-
 <input type="text" id="listTitle">
-<button id="button">New list</button>
-
+<button id="createList">New list</button>
 </header>
+
 <hr>
 <div id="container"></div>
 
@@ -36,8 +31,6 @@
 
 
 <script>
-
-
 
 const user = document.getElementById("user");
 const listTitle = document.getElementById("listTitle");
@@ -83,12 +76,20 @@ async function loadData() {
              if (response.status===403){
             location.href = "./userLogin.html";
         }
-           let html = "";
            for (let value of data) {
-           
-            html += "<h2>" + value.listName + "</h2>";
+            let listDiv = document.createElement("div");
+            let html = `
+                        <h2>${value.listName}</h2>                       
+                    `;
+
+            listDiv.innerHTML = html;
+            container.appendChild(listDiv);
+
+            listDiv.addEventListener('click', function(evt) {
+                    localStorage.setItem("listData", JSON.stringify(value));
+                    location.href = "./listItems.html"
+                });
         }
-        container.innerHTML = html;
              console.log(data);   
              }
          catch(err) {
@@ -96,12 +97,7 @@ async function loadData() {
         }
 }
 
-
-
-
-
-
-document.getElementById("button").onclick = async function(evt) {
+document.getElementById("createList").onclick = async function(evt) {
 
     if(listTitle.value.length <= 0 ){
             alert("Must type in title");
@@ -123,9 +119,6 @@ document.getElementById("button").onclick = async function(evt) {
         let response = await fetch("/tasks", config);
         let data = await response.json();
 
-
-
-        console.log(data);   
         }
     catch(err) {
         console.log("Noe gitt galt...")
