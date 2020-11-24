@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>My document</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+
+<body>
+
+    <header>
+     <h1>Update User</h1>
+
+     <div class="dropdown">
+        <button id="user" class="dropbtn"></button>
+        <div class="dropdown-content">
+         <button onclick="logout()">Logout</button>
+         <button onclick="list()">Lists</button>
+        </div>
+        
+    </header>
+
+
+    <div class="update">
+        <input type="text" id="newUsername">
+        <button id="username">Update username</button>
+        <input type="text" id="newPassword">
+        <button id="password">Update password</button>
+        <button id="delete">Delete user</button>
+    </div>
+
+
+    </body>
+
+<script>
+
+function list() {
+    location.href = "./tasks.html";
+    }
+
+</script>

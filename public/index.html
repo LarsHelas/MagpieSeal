@@ -61,6 +61,7 @@
             let data = await response.json();
             if(response.status === 200){
                 respTxt.innerHTML = "Bruker opprettet!";
+                location.href = "./userLogin.html";
             }
             console.log(response.status);   
             }
