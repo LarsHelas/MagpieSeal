@@ -15,6 +15,8 @@
         <input type="text" id="listName">
         <button id="updateList">Update list</button>
         <button id="deleteList">Delete list</button>
+        <button id="togglePublic">Toggle Public</button>
+        <p id="publicStatus">List is private</p>
 
         <div class="dropdown">
             <button id="user" class="dropbtn"></button>
@@ -28,7 +30,16 @@
     <hr>
     <input type="text" id="inputItem">
     <button id="newItem">New Item</button>
+
+    <input type="text" id="inputItem">
+    <button id="updateItem">Update Item</button>
+    <button id="updateItem">Delete Item</button>
+    <p id="activeItem">Selected item:</p>
+    
+
     <div id="container"></div>
+
+    
 
 </body>
 
@@ -49,7 +60,7 @@
     let logindataString = JSON.stringify(logindata.token);
 
     //Viser hvem som er logget inn
-    let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "];
+    let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
     let randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
@@ -98,7 +109,7 @@
             }
         }
         catch (err) {
-            console.log("Noe gitt galt...")
+            console.log("Something went wrong.")
         }
 
     }
@@ -129,7 +140,7 @@
             console.log(data);
         }
         catch (err) {
-            console.log("Noe gitt galt...")
+            console.log("Something went wrong.")
         }
         window.location.reload();
     }
@@ -156,7 +167,7 @@
             console.log(data);
         }
         catch (err) {
-            console.log("Noe gitt galt...")
+            console.log("Something went wrong.")
         }
     }
 
@@ -183,7 +194,7 @@
             console.log(data);
         }
         catch (err) {
-            console.log("Noe gitt galt...")
+            console.log("Something went wrong.")
         }
         window.location.reload();
     }
