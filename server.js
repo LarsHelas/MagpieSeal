@@ -170,7 +170,7 @@ server.put("/tasks/updateListItems", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/deleteListItems", authenticator, async function (req, res){
+server.delete("/tasks/deleteListItems", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -198,8 +198,8 @@ server.put("/tasks/togglePublic", authenticator, async function (req, res){
         const token = JSON.parse(req.headers.authorization);
         const payload = new PayloadInfo(token.payload)  
         const usersId = payload.id();
-        await database.publicToggle(req.body.listGroupsId, usersId);
-        res.status(200).json({msg:"toggle successful"}).end();
+        const result = await database.publicToggle(req.body.listGroupsId, usersId);
+        res.status(200).json(result).end();
     }
 });
 

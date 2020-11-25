@@ -12,14 +12,14 @@
 
     <header>
         <h1 id="listNameHeader"></h1>
-        
+
         <div class="updateDelete">
-        <input type="text" id="listName">
-        <button id="updateList">Update list</button>
-        <button id="deleteList">Delete list</button>
-    </div>
+            <input type="text" id="listName">
+            <button id="updateList">Update list</button>
+            <button id="deleteList">Delete list</button>
+        </div>
         <button id="togglePublic">Toggle Public</button>
-        <p id="publicStatus">List is private</p>
+        <p id="publicStatus"></p>
 
         <div class="dropdown">
             <button id="user" class="dropbtn"></button>
@@ -34,15 +34,15 @@
     <input type="text" id="inputItem">
     <button id="newItem">New Item</button>
 
-    <input type="text" id="inputItem">
+    <input type="text" id="inputItemUpdate">
     <button id="updateItem">Update Item</button>
-    <button id="updateItem">Delete Item</button>
+    <button id="deleteItem">Delete Item</button>
     <p id="activeItem">Selected item:</p>
-    
+
 
     <div id="container"></div>
 
-    
+
 
 </body>
 
@@ -53,25 +53,30 @@
     const listName = document.getElementById("listName");
     const listNameHeader = document.getElementById("listNameHeader");
     const inputItem = document.getElementById("inputItem");
+    const activeItem = document.getElementById("activeItem");
+    const inputItemUpdate = document.getElementById("inputItemUpdate");
+    const publicStatus = document.getElementById("publicStatus");
 
 
     let logindataJson = localStorage.getItem("logindata");
     if (logindataJson === null) {
         logindataJson = '{"token":"null"}';
     }
-    let logindata = JSON.parse(logindataJson);
-    let logindataString = JSON.stringify(logindata.token);
+    const logindata = JSON.parse(logindataJson);
+    const logindataString = JSON.stringify(logindata.token);
 
     //Viser hvem som er logget inn
-    let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
-    let randomGreet = Math.floor(Math.random() * greetings.length);
+    const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
+    const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
     const listDataJson = localStorage.getItem("listData");
     const listData = JSON.parse(listDataJson);
     const listGroupsId = JSON.stringify(listData.listGroupsId);
 
+    let listItemsId = null; 
 
+    
 
     //henter inn list items 
     loadData();
@@ -96,6 +101,11 @@
             if (response.status === 403) {
                 location.href = "./userLogin.html";
             }
+            if (data.list[0].public === 0){
+            publicStatus.innerText = "List is private"
+            }else {
+                publicStatus.innerText = "List is public"
+            }
             listNameHeader.innerText = data.list[0].listName;
             for (let value of data.items) {
                 let listDiv = document.createElement("div");
@@ -107,14 +117,15 @@
                 container.appendChild(listDiv);
 
                 listDiv.addEventListener('click', function (evt) {
-                    localStorage.setItem("itemData", JSON.stringify(value));
+                    listItemsId = value.listItemsId; 
+                    activeItem.innerText = "Selected item: " + value.itemName;
                 });
             }
         }
         catch (err) {
             console.log("Something went wrong.")
         }
-
+       
     }
 
     //oppdatere lister
@@ -176,7 +187,10 @@
 
     //Add list item
     document.getElementById("newItem").onclick = async function (evt) {
-
+        if(inputItem.value <= 0){
+            alert("Must type inn item")
+            return; 
+        }
         let body = {
             itemName: inputItem.value,
             listGroupsId: listGroupsId
@@ -195,6 +209,91 @@
             let data = await response.json();
 
             console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    //Oppdater item
+    document.getElementById("updateItem").onclick = async function (evt) {
+        if(inputItemUpdate.value <= 0 || listItemsId === null){
+            alert("Must type inn item name and select an item to update")
+            return; 
+        }
+        let body = {
+            itemName: inputItemUpdate.value,
+            listItemsId: listItemsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/updateListItems", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    document.getElementById("deleteItem").onclick = async function (evt) {
+        if(listItemsId === null){
+            alert("Must select an item to delete")
+            return; 
+        }
+        let body = {
+            listItemsId: listItemsId
+        }
+        let config = {
+            method: "DELETE",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/deleteListItems", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    document.getElementById("togglePublic").onclick = async function (evt) {
+        let body = {
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/togglePublic", config);
+            let data = await response.json();
+            publicStatus.innerText = data.msg; 
+            //console.log(data);
         }
         catch (err) {
             console.log("Something went wrong.")
