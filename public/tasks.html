@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasks</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
 
-<header>
-<h1>Task planner</h1>
+    <header>
+        <h1>Task planner</h1>
 
-<div class="dropdown">
-    <button id="user" class="dropbtn"></button>
-    <div class="dropdown-content">
-     <button onclick="logout()">Logout</button>
-     <button onclick="updateuUser()">Update user</button>
-    </div>
-</div>
+        <div class="dropdown">
+            <button id="user" class="dropbtn"></button>
+            <div class="dropdown-content">
+                <button onclick="logout()">Logout</button>
+                <button onclick="updateuUser()">Update user</button>
+            </div>
+        </div>
 
-<input type="text" id="listTitle">
-<button id="createList">New list</button>
-</header>
+        <input type="text" id="listTitle">
+        <button id="createList">New list</button>
+    </header>
 
-<hr>
-<div id="container"></div>
+    <hr>
+    <div id="container"></div>
 
 
 </body>
@@ -32,99 +34,104 @@
 
 <script>
 
-const user = document.getElementById("user");
-const listTitle = document.getElementById("listTitle");
-const container = document.getElementById("container");
+    const user = document.getElementById("user");
+    const listTitle = document.getElementById("listTitle");
+    const container = document.getElementById("container");
 
 
-let logindataJson = localStorage.getItem("logindata");
-if (logindataJson === null){
-    logindataJson = '{"token":"null"}';
-}
-let logindata = JSON.parse(logindataJson);
-let logindataString = JSON.stringify(logindata.token);
+    let logindataJson = localStorage.getItem("logindata");
+    if (logindataJson === null) {
+        logindataJson = '{"token":"null"}';
+    }
+    let logindata = JSON.parse(logindataJson);
+    let logindataString = JSON.stringify(logindata.token);
 
-//Viser hvem som er logget inn
-let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
-let randomGreet = Math.floor(Math.random()*greetings.length);
-user.innerHTML = greetings[randomGreet] + logindata.username; 
+    //Viser hvem som er logget inn
+    let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "];
+    let randomGreet = Math.floor(Math.random() * greetings.length);
+    user.innerHTML = greetings[randomGreet] + logindata.username;
 
-function logout() {
+    function logout() {
         localStorage.clear();
         window.location.reload();
     }
 
-function updateuUser() {
-    location.href = "./updateUser.html";
+    function updateuUser() {
+        location.href = "./updateUser.html";
     }
 
-
-loadData();
-async function loadData() {
-        
- 
-         let config = {
-             method: "GET",
-             headers:{
-                 "authorization": logindataString
-             }
-         }
-         
-         try {
-             let response = await fetch("/tasks", config);
-             let data = await response.json();
-             if (response.status===403){
-            location.href = "./userLogin.html";
+    window.addEventListener("pageshow", function (event) {
+        let historyCheck = (window.performance.navigation.type === 2);
+        if (historyCheck) {
+            window.location.reload();
         }
-           for (let value of data) {
-            let listDiv = document.createElement("div");
-            let html = `
+    });
+
+    loadData();
+    async function loadData() {
+
+        let config = {
+            method: "GET",
+            headers: {
+                "authorization": logindataString
+            }
+        }
+
+        try {
+            let response = await fetch("/tasks", config);
+            let data = await response.json();
+            if (response.status === 403) {
+                location.href = "./userLogin.html";
+            }
+            for (let value of data) {
+                let listDiv = document.createElement("div");
+                let html = `
                         <h2>${value.listName}</h2>                       
                     `;
 
-            listDiv.innerHTML = html;
-            container.appendChild(listDiv);
+                listDiv.innerHTML = html;
+                container.appendChild(listDiv);
 
-            listDiv.addEventListener('click', function(evt) {
+                listDiv.addEventListener('click', function (evt) {
                     localStorage.setItem("listData", JSON.stringify(value));
                     location.href = "./listItems.html"
                 });
+            }
+            console.log(data);
         }
-             console.log(data);   
-             }
-         catch(err) {
-             console.log("Noe gitt galt");
+        catch (err) {
+            console.log("Noe gitt galt");
         }
-}
+    }
 
-document.getElementById("createList").onclick = async function(evt) {
+    document.getElementById("createList").onclick = async function (evt) {
 
-    if(listTitle.value.length <= 0 ){
+        if (listTitle.value.length <= 0) {
             alert("Must type in title");
             return;
-    }
-    let body = {
-        title: listTitle.value
-    }
-    let config = {
-        method: "POST",
-        headers:{
-            "content-type": "application/json",
-            "authorization": logindataString
-        },
-        body: JSON.stringify(body)
-    }
-    
-    try {
-        let response = await fetch("/tasks", config);
-        let data = await response.json();
+        }
+        let body = {
+            title: listTitle.value
+        }
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks", config);
+            let data = await response.json();
 
         }
-    catch(err) {
-        console.log("Noe gitt galt...")
+        catch (err) {
+            console.log("Noe gitt galt...")
+        }
+        window.location.reload();
     }
-    window.location.reload();
-}
 
 </script>
 

@@ -1,125 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My document</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
 
-<header>
-<h1>Reminder:</h1>
-<input type="text" id="username">
-<button id="updateList">Update list</button>
-<button id="deleteList">Delete list</button>
+    <header>
+        <h1 id="listNameHeader"></h1>
+        <input type="text" id="listName">
+        <button id="updateList">Update list</button>
+        <button id="deleteList">Delete list</button>
 
-<div class="dropdown">
-    <button id="user" class="dropbtn"></button>
-    <div class="dropdown-content">
-     <button onclick="logout()">Logout</button>
-     <button onclick="updateuUser()">Update user</button>
-    </div>
-</div>
+        <div class="dropdown">
+            <button id="user" class="dropbtn"></button>
+            <div class="dropdown-content">
+                <button onclick="logout()">Logout</button>
+                <button onclick="updateuUser()">Update user</button>
+            </div>
+        </div>
 
-</header>
-<hr>
+    </header>
+    <hr>
+    <input type="text" id="inputItem">
+    <button id="newItem">New Item</button>
+    <div id="container"></div>
 
 </body>
 
 
 <script>
-
-const user = document.getElementById("user");
-
-
-let logindataJson = localStorage.getItem("logindata");
-if (logindataJson === null){
-    logindataJson = '{"token":"null"}';
-}
-let logindata = JSON.parse(logindataJson);
-let logindataString = JSON.stringify(logindata.token);
-
-//Viser hvem som er logget inn
-let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
-let randomGreet = Math.floor(Math.random()*greetings.length);
-user.innerHTML = greetings[randomGreet] + logindata.username; 
+    //DOM
+    const user = document.getElementById("user");
+    const listName = document.getElementById("listName");
+    const listNameHeader = document.getElementById("listNameHeader");
+    const inputItem = document.getElementById("inputItem");
 
 
+    let logindataJson = localStorage.getItem("logindata");
+    if (logindataJson === null) {
+        logindataJson = '{"token":"null"}';
+    }
+    let logindata = JSON.parse(logindataJson);
+    let logindataString = JSON.stringify(logindata.token);
 
-//henter inn lis items 
-loadData();
-async function loadData() {
-         let config = {
-             method: "GET",
-             headers:{
-                 "authorization": logindataString
-             }
-         }
-         
-         try {
-             let response = await fetch("/tasks/items", config);
-             let data = await response.json();
+    //Viser hvem som er logget inn
+    let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "];
+    let randomGreet = Math.floor(Math.random() * greetings.length);
+    user.innerText = greetings[randomGreet] + logindata.username;
+
+    const listDataJson = localStorage.getItem("listData");
+    const listData = JSON.parse(listDataJson);
+    const listGroupsId = JSON.stringify(listData.listGroupsId);
 
 
 
-             console.log(data);   
-             }
-         catch(err) {
-             console.log("Noe gitt galt");
+    //henter inn list items 
+    loadData();
+    async function loadData() {
+
+
+        let body = {
+            listGroupsId: listGroupsId
         }
-}
-
-//oppdatere lister
-document.getElementById("updateList").onclick = async function(evt) {
-
-    let body = {
-        listTitle: "updated",
-        listGroupsId: 5
-    }
-    let config = {
-        method: "PUT",
-        headers:{
-            "content-type": "application/json",
-        },
-        body: JSON.stringify(body)
-    }
-    
-    try {
-        let response = await fetch("/tasks/updateLists", config);
-        let data = await response.json();
-        
-        console.log(data);   
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
         }
-    catch(err) {
-        console.log("Noe gitt galt...")
+
+        try {
+            let response = await fetch("/tasks/items", config);
+            let data = await response.json();
+            if (response.status === 403) {
+                location.href = "./userLogin.html";
+            }
+            listNameHeader.innerText = data.list[0].listName;
+            for (let value of data.items) {
+                let listDiv = document.createElement("div");
+                let html = `
+                        <h2>${value.itemName}</h2>                       
+                    `;
+
+                listDiv.innerHTML = html;
+                container.appendChild(listDiv);
+
+                listDiv.addEventListener('click', function (evt) {
+                    localStorage.setItem("itemData", JSON.stringify(value));
+                });
+            }
+        }
+        catch (err) {
+            console.log("Noe gitt galt...")
+        }
+
     }
-}
 
-//slette lister
-document.getElementById("deleteList").onclick = async function(evt) {
+    //oppdatere lister
+    document.getElementById("updateList").onclick = async function (evt) {
+        if (listName.value.length <= 0) {
+            alert("Must type in title");
+            return;
+        }
+        let body = {
+            listName: listName.value,
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
 
-let body = {
-    listGroupsId: 6
-}
-let config = {
-    method: "POST",
-    headers:{
-        "content-type": "application/json",
-    },
-    body: JSON.stringify(body)
-}
+        try {
+            let response = await fetch("/tasks/updateLists", config);
+            let data = await response.json();
 
-try {
-    let response = await fetch("/tasks/deleteLists", config);
-    let data = await response.json();
-    
-    console.log(data);   
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Noe gitt galt...")
+        }
+        window.location.reload();
     }
-catch(err) {
-    console.log("Noe gitt galt...")
-}
-}
+
+    //slette lister
+    document.getElementById("deleteList").onclick = async function (evt) {
+
+        let body = {
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "DELETE",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/deleteLists", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Noe gitt galt...")
+        }
+    }
+
+    //Add list item
+    document.getElementById("newItem").onclick = async function (evt) {
+
+        let body = {
+            itemName: inputItem.value,
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/addListItem", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Noe gitt galt...")
+        }
+        window.location.reload();
+    }
+
 </script>
 
 

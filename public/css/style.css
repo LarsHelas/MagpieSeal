@@ -148,7 +148,50 @@ section-a > h1 {
     border-radius: 3px;
 }
 
+/*List items*/
 
+#updateList {
+    background-color: darkred;
+    color: white;
+    border: 1px solid darkred;
+    border-radius: 3px;
+}
+
+#updateList:hover  {
+    background-color: lightcoral;
+}
+
+#deleteList {
+    background-color: darkred;
+    color: white;
+    border: 1px solid darkred;
+    border-radius: 3px;
+}
+
+#deleteList:hover {
+    background-color: lightcoral;
+}
+
+#listName {
+    border: 1px solid lightgrey; 
+    border-radius: 3px;
+}
+
+#newItem {
+    background-color: darkred;
+    color: white;
+    border: 1px solid darkred;
+    border-radius: 3px;
+}
+
+#newItem:Hover {
+    background-color: lightcoral;
+}
+
+#inputItem {
+    border: 1px solid lightgrey; 
+    border-radius: 3px;
+}
 
 
 

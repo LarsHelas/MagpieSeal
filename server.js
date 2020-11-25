@@ -121,7 +121,7 @@ server.put("/tasks/updateLists", authenticator, async function (req, res){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
-    await database.listUpdate(req.body.listTitle, req.body.listGroupsId, usersId);
+    await database.listUpdate(req.body.listName, req.body.listGroupsId, usersId);
     res.status(200).json({msg:"List updated!"}).end();
     }
 });
@@ -138,17 +138,17 @@ server.delete("/tasks/deleteLists", authenticator, async function (req, res){
 });
 
 //List items
-server.get("/tasks/items", authenticator, async function (req, res){ 
+server.post("/tasks/items", authenticator, async function (req, res){ 
     const result = res.locals.result;
     if (result === true){
         const list = await database.listItemName(req.body.listGroupsId);
-        res.status(200).json(list)
+        res.status(200).json(list).end();
     }else if(result === false) {
-        res.status(403).json({msg:"Bad token"})
+        res.status(403).json({msg:"Bad token"}).end();
     }
 });
 
-server.post("/tasks/items", authenticator, async function (req, res){
+server.post("/tasks/addListItem", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
