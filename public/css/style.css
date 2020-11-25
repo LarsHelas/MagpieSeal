@@ -223,3 +223,16 @@ section-a > h1 {
       
     }
 }
+
+@media (max-width: 700px) {
+    .updateDelete {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    h1 {
+        text-align: left;
+    }
+}
