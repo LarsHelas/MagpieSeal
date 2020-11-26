@@ -146,31 +146,26 @@
         window.location.reload();
     }
 
-    document.getElementById("password").onclick = async function (evt) {
+    document.getElementById("delete").onclick = async function (evt) {
 
-        let body = {
-            password: newPassword.value
-        }
         let config = {
-            method: "PUT",
+            method: "DELETE",
             headers: {
                 "content-type": "application/json",
                 "authorization": logindataString
-            },
-            body: JSON.stringify(body)
+            }
         }
 
         try {
-            let response = await fetch("/user/updatePassword", config);
+            let response = await fetch("/user/deleteUser", config);
             let data = await response.json();
             if (response.status === 200) {
-                respTxt.innerText = "Password updated"
+                location.href = "./index.html";
             }
         }
         catch (err) {
             console.log("Something went wrong.")
         }
-        window.location.reload();
     }
 
 </script>
