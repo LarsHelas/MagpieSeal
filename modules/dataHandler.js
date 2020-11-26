@@ -196,7 +196,7 @@ class StorageHandler {
         } catch (err) {
             client.end();
             console.log(err);
-            results = err;
+            result = err;
         }
         console.log()
         let result = {list: list.rows,items: items.rows}; 
@@ -296,11 +296,12 @@ class StorageHandler {
                 resultList = await client.query('UPDATE "public"."tLists" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }
                 checkPublicItems = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
+            if (checkPublicItems.rows.length > 0) {
             if (checkPublicItems.rows[0].public===0){
                 resultList = await client.query('UPDATE "public"."tItems" SET "public" = 1 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }else{
                 resultList = await client.query('UPDATE "public"."tItems" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            }
+            }}
         } catch (err) {
             client.end();
             console.log(err);
@@ -308,9 +309,9 @@ class StorageHandler {
             resultItems = err;
         }
         if (checkPublicLists.rows[0].public===0){
-            return {msg:"List is public"}
-        } else {
             return {msg:"List is private"}
+        } else {
+            return {msg:"List is public"}
         }
     }
 }
