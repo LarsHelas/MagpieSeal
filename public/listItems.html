@@ -25,8 +25,8 @@
                 <button onclick="taskPlanner()">Task Planner</button>
             </div>
         </div>
-        
-        
+
+
 
 
 
@@ -36,19 +36,17 @@
     <input type="text" id="listName">
     <button id="updateList">Update list name</button>
     <button id="deleteList">Delete list</button>
-    
+
     <div class="listItems">
-      <input type="text" id="inputItem">
-       <button id="newItem">New Item</button>
-       <input type="text" id="inputItemUpdate">
-       <button id="updateItem">Update Item</button>
-       <button id="deleteItem">Delete Item</button>
+        <input type="text" id="inputItem">
+        <button id="newItem">New Item</button>
+        <input type="text" id="inputItemUpdate">
+        <button id="updateItem">Update Item</button>
     </div>
     <p id="activeItem">Selected item:</p>
 
-    <div id="container"></div>
-
-
+    <div id="itemsCont"></div>
+    <div id="btnCont"></div>
 
 </body>
 
@@ -62,7 +60,8 @@
     const activeItem = document.getElementById("activeItem");
     const inputItemUpdate = document.getElementById("inputItemUpdate");
     const publicStatus = document.getElementById("publicStatus");
-
+    const itemsCont = document.getElementById("itemsCont");
+    const btnCont = document.getElementById("btnCont");
 
     let logindataJson = localStorage.getItem("logindata");
     if (logindataJson === null) {
@@ -70,7 +69,7 @@
     }
     const logindata = JSON.parse(logindataJson);
     const logindataString = JSON.stringify(logindata.token);
-    
+
     let listDataJson = localStorage.getItem("listData");
     if (listDataJson === null) {
         listDataJson = '{"listGroupsId":"null"}';
@@ -97,10 +96,10 @@
     function updateuUser() {
         location.href = "./updateUser.html";
     }
-    
 
 
-    let listItemsId = null; 
+
+    let listItemsId = null;
 
 
     //henter inn list items 
@@ -123,34 +122,68 @@
         try {
             let response = await fetch("/tasks/items", config);
             let data = await response.json();
-            if (response.status === 403) {
-                location.href = "./userLogin.html";
-            }
-            if (data.list[0].public === 0){
-            publicStatus.innerText = "List is private"
-            }else {
-                publicStatus.innerText = "List is public"
-            }
-            listNameHeader.innerText = data.list[0].listName;
-            for (let value of data.items) {
-                let listDiv = document.createElement("div");
-                let html = `
-                        <h2>${value.itemName}</h2>                       
+            if (response.status === 200) {
+                if (data.list[0].public === 0) {
+                    publicStatus.innerText = "List is private"
+                } else {
+                    publicStatus.innerText = "List is public"
+                }
+                listNameHeader.innerText = data.list[0].listName;
+                for (let value of data.items) {
+                    let listDiv = document.createElement("div");
+                    let btnDiv = document.createElement("div");
+                  
+                    let list = `
+                        <h2>${value.itemName}</h2>
+                                              
                     `;
+                    let button = `
+                        <button>X</button>                       
+                    `;
+                    listDiv.innerHTML = list;
+                    btnDiv.innerHTML = button; 
+                    itemsCont.appendChild(listDiv);
+                    btnCont.appendChild(btnDiv);
 
-                listDiv.innerHTML = html;
-                container.appendChild(listDiv);
+                    btnDiv.addEventListener('click', async function (evt) {
+                        let body = {
+                            listItemsId: value.listItemsId
+                        }
+                        let config = {
+                            method: "DELETE",
+                            headers: {
+                                "content-type": "application/json",
+                                "authorization": logindataString
+                            },
+                            body: JSON.stringify(body)
+                        }
 
-                listDiv.addEventListener('click', function (evt) {
+                        try {
+                            let response = await fetch("/tasks/deleteListItems", config);
+                            let data = await response.json();
+
+                            console.log(data);
+                        }
+                        catch (err) {
+                            console.log("Something went wrong.")
+                        }
+                        window.location.reload();
+                    });
+                    listDiv.addEventListener('click', function (evt) {
                     listItemsId = value.listItemsId; 
                     activeItem.innerText = "Selected item: " + value.itemName;
                 });
+                }
             }
+            if (response.status === 403) {
+                location.href = "./userLogin.html";
+            }
+
         }
         catch (err) {
             console.log("Something went wrong.")
         }
-       
+
     }
 
     //oppdatere lister
@@ -213,9 +246,9 @@
 
     //Add list item
     document.getElementById("newItem").onclick = async function (evt) {
-        if(inputItem.value <= 0){
+        if (inputItem.value <= 0) {
             alert("Must type inn item")
-            return; 
+            return;
         }
         let body = {
             itemName: inputItem.value,
@@ -244,9 +277,9 @@
 
     //Oppdater item
     document.getElementById("updateItem").onclick = async function (evt) {
-        if(inputItemUpdate.value <= 0 || listItemsId === null){
+        if (inputItemUpdate.value <= 0 || listItemsId === null) {
             alert("Must type inn item name and select an item to update")
-            return; 
+            return;
         }
         let body = {
             itemName: inputItemUpdate.value,
@@ -273,10 +306,10 @@
         window.location.reload();
     }
 
-    document.getElementById("deleteItem").onclick = async function (evt) {
-        if(listItemsId === null){
+   /* document.getElementById("deleteItem").onclick = async function (evt) {
+        if (listItemsId === null) {
             alert("Must select an item to delete")
-            return; 
+            return;
         }
         let body = {
             listItemsId: listItemsId
@@ -300,7 +333,7 @@
             console.log("Something went wrong.")
         }
         window.location.reload();
-    }
+    }*/
 
     document.getElementById("togglePublic").onclick = async function (evt) {
         let body = {
@@ -318,7 +351,7 @@
         try {
             let response = await fetch("/tasks/togglePublic", config);
             let data = await response.json();
-            publicStatus.innerText = data.msg; 
+            publicStatus.innerText = data.msg;
             //console.log(data);
         }
         catch (err) {
