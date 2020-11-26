@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My document</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1 id="listNameHeader"></h1>
+
+        <div class="dropdown">
+            <button id="user" class="dropbtn"></button>
+            <div class="dropdown-content">
+                <button onclick="logout()">Logout</button>
+                <button onclick="updateuUser()">Update user</button>
+            </div>
+        </div>
+
+    </header>
+    <hr>
+
+    <div id="container"></div>
+
+
+</body>
+
+
+<script>
+    //DOM
+    const user = document.getElementById("user");
+    const listNameHeader = document.getElementById("listNameHeader");
+    const container = document.getElementById("container");
+
+
+    let logindataJson = localStorage.getItem("logindata");
+    if (logindataJson === null) {
+        logindataJson = '{"token":"null"}';
+    }
+    const logindata = JSON.parse(logindataJson);
+    const logindataString = JSON.stringify(logindata.token);
+
+    const listDataJson = localStorage.getItem("listData");
+    const listData = JSON.parse(listDataJson);
+    const listGroupsId = JSON.stringify(listData.listGroupsId);
+
+    //Viser hvem som er logget inn
+    const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
+    const randomGreet = Math.floor(Math.random() * greetings.length);
+    user.innerText = greetings[randomGreet] + logindata.username;
+
+    listNameHeader.innerText = listData.listName;
+
+    //henter inn list items 
+    loadData();
+    async function loadData() {
+
+
+        let body = {
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/public/tasks", config);
+            let data = await response.json();
+            if (response.status === 200) {
+                for (let value of data) {
+                    let listDiv = document.createElement("div");
+                    let html = `
+                        <h2>${value.itemName}</h2>                       
+                    `;
+
+                    listDiv.innerHTML = html;
+                    container.appendChild(listDiv);
+                }
+            } else if (response.status === 404) {
+                listNameHeader.innerText = data.msg;
+            }
+            if (response.status === 403) {
+                location.href = "./userLogin.html";
+            }
+
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+    }
+
+
+
+</script>
+
+
+
+
+</html>

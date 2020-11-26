@@ -32,26 +32,18 @@
     </header>
     <hr>
 
-
+    <input type="text" id="listName">
+    <button id="updateList">Update list name</button>
+    <button id="deleteList">Delete list</button>
+    
     <div class="listItems">
-      <input type="text" id="listName">
-      <button id="updateList">Update list name</button>
       <input type="text" id="inputItem">
        <button id="newItem">New Item</button>
-      <input type="text" id="inputItem">
-      <button id="updateItem">Update Item</button>
+       <input type="text" id="inputItemUpdate">
+       <button id="updateItem">Update Item</button>
+       <button id="deleteItem">Delete Item</button>
     </div>
-
     <p id="activeItem">Selected item:</p>
-    
-    <button id="deleteItem">Delete Item</button>
-    <button id="deleteList">Delete list</button>
-
-    <input type="text" id="inputItemUpdate">
-    <button id="updateItem">Update Item</button>
-    <button id="deleteItem">Delete Item</button>
-    <p id="activeItem">Selected item:</p>
-
 
     <div id="container"></div>
 
@@ -77,19 +69,17 @@
     }
     const logindata = JSON.parse(logindataJson);
     const logindataString = JSON.stringify(logindata.token);
+    
+    const listDataJson = localStorage.getItem("listData");
+    const listData = JSON.parse(listDataJson);
+    const listGroupsId = JSON.stringify(listData.listGroupsId);
 
     //Viser hvem som er logget inn
     const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
     const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
-    const listDataJson = localStorage.getItem("listData");
-    const listData = JSON.parse(listDataJson);
-    const listGroupsId = JSON.stringify(listData.listGroupsId);
-
     let listItemsId = null; 
-
-    
 
     //henter inn list items 
     loadData();
@@ -196,6 +186,7 @@
         catch (err) {
             console.log("Something went wrong.")
         }
+        location.href = "./tasks.html"
     }
 
     //Add list item

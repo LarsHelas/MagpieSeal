@@ -21,6 +21,7 @@ server.listen(server.get('port'), function () {
 
 
 //Users
+
 server.post("/user", async function (req, res){
     const newUser = new user(req.body.username, req.body.password);
     const response = await newUser.create();
@@ -208,7 +209,11 @@ server.get("/public", authenticator, async function (req, res){
     const result = res.locals.result;
     if (result === true){
         const list = await database.publicLists();
-        res.status(200).json(list)
+        if (list === null){
+            res.status(404).json({msg:"No public lists found"}).end();
+        }else {
+            res.status(200).json(list).end();
+        }
     }else if(result === false) {
         res.status(403).json({msg:"Bad token"})
     }
@@ -218,7 +223,11 @@ server.post("/public/tasks", authenticator, async function (req, res){
     const result = res.locals.result;
     if (result === true){
         const list = await database.publicListItems(req.body.listGroupsId);
-        res.status(200).json(list)
+        if (list === null) {
+            res.status(404).json({msg:"No public lists found"}).end();
+        }else {
+            res.status(200).json(list).end();
+        }
     }else if(result === false) {
         res.status(403).json({msg:"Bad token"})
     }

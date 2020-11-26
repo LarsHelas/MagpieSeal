@@ -18,15 +18,17 @@ class StorageHandler {
         try {
             await client.connect();
             usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
-
+            client.end();
             if (usernamesDB.rows.length > 0) {
                 return false; 
             } else {
+                await client.connect();
                 results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password])
                 client.end();
                 return results; 
             }
-
+            
+            
         } catch (err) {
             client.end();
             console.log(err);
@@ -41,6 +43,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1 AND password = $2', [username, password])
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -59,6 +62,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('UPDATE "public"."tUsers" SET "username" = $1 WHERE "usersId" = $2', [username, usersId])
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -71,6 +75,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('UPDATE "public"."tUsers" SET "password" = $1 WHERE "usersId" = $2', [password, usersId])
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -90,18 +95,18 @@ class StorageHandler {
 
         try {
             await client.connect();
-
             // Get all items
             userLists = await client.query('SELECT* FROM "tLists" WHERE "usersId"= $1', [usersId]);
             userLists.rows.forEach(row => {
                 groupIDs.push(row.listGroupsId)
-                
+                   
             });
             if(groupIDs.length>0){
             let listQuery = ''.concat('SELECT * FROM "tItems" WHERE "listGroupsId" IN (', groupIDs.toString(), ')'); // .ToString concats array values with comma - perfect for SQL :)
             userItems = await client.query(listQuery);
             userItems.rows.forEach(row => {
                 itemIDs.push(row.listItemsId)
+                
             });
             }
             // Delete all items
@@ -109,16 +114,18 @@ class StorageHandler {
             if(itemIDs.length>0){
             let itemDeleteQuery = ''.concat('DELETE FROM "public"."tItems" WHERE "listItemsId" IN (', itemIDs.toString(), ')');
             deleteItems = await client.query(itemDeleteQuery);
-            }
-            // Delete lists
             
-            if(groupIDs.length>0){
+            }
+            // Delete lists  
+            if(groupIDs.length>0){    
             deleteLists = await client.query('DELETE FROM "tLists" WHERE "usersId"= $1', [usersId]);
             }
             // Destroy user
             deleteUser = await client.query('DELETE FROM "public"."tUsers" WHERE "usersId" = $1', [usersId]);
-
-        } catch (err) {
+            client.end();
+        } 
+        
+        catch (err) {
             client.end();
             console.log(err);
         }
@@ -129,7 +136,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."usersId" = $1', [usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -148,7 +155,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('INSERT INTO "public"."tLists"("listName", "usersId") VALUES($1, $2) RETURNING *;', [title, usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -161,7 +168,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('UPDATE "public"."tLists" SET "listName" = $1 WHERE "listGroupsId" = $2 AND "usersId" = $3', [title, listGroupsId, usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -177,7 +184,7 @@ class StorageHandler {
             await client.connect();
             items = await client.query('DELETE FROM "public"."tItems" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-
+            client.end();    
         } catch (err) {
             client.end();
             console.log(err);
@@ -192,7 +199,7 @@ class StorageHandler {
             await client.connect();
             list = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1', [listGroupsId])
             items = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -212,7 +219,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('INSERT INTO "public"."tItems"("itemName", "listGroupsId", "usersId") VALUES($1, $2, $3) RETURNING *;', [itemName, listGroupsId, usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -225,7 +232,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('UPDATE "public"."tItems" SET "itemName" = $1 WHERE "listItemsId" = $2 AND "usersId" = $3', [itemName, listItemsId, usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -238,7 +245,7 @@ class StorageHandler {
         try {
             await client.connect();
             results = await client.query('DELETE FROM "public"."tItems" WHERE "listItemsId" = $1 AND "usersId" = $2', [listItemsId, usersId])
-
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -250,8 +257,8 @@ class StorageHandler {
         let results = null;
         try {
             await client.connect();
-            results = await client.query('SELECT * FROM "public"."tLists" WHERE "tItems"."public" = 1')
-
+            results = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."public" = 1')
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -265,18 +272,22 @@ class StorageHandler {
     }
     async publicListItems(listGroupsId) {
         const client = new pg.Client(this.credentials);
-        let results = null;
+        let list = null;
+        let items = null;
         try {
             await client.connect();
-            results = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1 AND "tItems"."public" = 1', [listGroupsId])
-
+            list = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1', [listGroupsId]);
+            if (list.rows[0].public === 1){
+            items = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId]);
+        }
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
             results = err;
         }
-        if (results.rows.length > 0) {
-            return results.rows
+        if (list.rows[0].public === 1) {
+            return items.rows
         } else {
             return null;
         }
@@ -284,9 +295,7 @@ class StorageHandler {
     async publicToggle(listGroupsId, usersId) {
         const client = new pg.Client(this.credentials);
         let checkPublicLists = null; 
-        let checkPublicItems = null; 
         let resultList = null;
-        let resultItems = null;
         try {
             await client.connect();
                 checkPublicLists = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
@@ -295,18 +304,11 @@ class StorageHandler {
             }else{
                 resultList = await client.query('UPDATE "public"."tLists" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }
-                checkPublicItems = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
-            if (checkPublicItems.rows.length > 0) {
-            if (checkPublicItems.rows[0].public===0){
-                resultList = await client.query('UPDATE "public"."tItems" SET "public" = 1 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            }else{
-                resultList = await client.query('UPDATE "public"."tItems" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            }}
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
             resultList = err;
-            resultItems = err;
         }
         if (checkPublicLists.rows[0].public===0){
             return {msg:"List is private"}
