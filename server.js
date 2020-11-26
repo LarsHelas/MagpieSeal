@@ -214,7 +214,7 @@ server.get("/public", authenticator, async function (req, res){
     }
 });
 
-server.get("/public/tasks", authenticator, async function (req, res){ 
+server.post("/public/tasks", authenticator, async function (req, res){ 
     const result = res.locals.result;
     if (result === true){
         const list = await database.publicListItems(req.body.listGroupsId);
