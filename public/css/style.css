@@ -68,6 +68,18 @@ section-a > h1 {
     font-size: 30px;
 }
 
+#createList {
+    background-color: #96c9e3;
+    color: white;
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+#createList:hover {
+    background-color: lightcoral;
+}
+
 
 /*dropdownmenu*/
 
@@ -133,13 +145,24 @@ section-a > h1 {
 }
 
 .update>button {
+    background-color: #96c9e3;
+    color: white;
+    border: 1px solid #96c9e3;
+    border-radius: 3px;
+}
+
+.update>button:hover {
+    background-color: lightcoral;
+}
+
+#delete {
     background-color: darkred;
     color: white;
     border: 1px solid darkred;
     border-radius: 3px;
 }
 
-.update>button:hover {
+#delete:hover {
     background-color: lightcoral;
 }
 
@@ -151,9 +174,9 @@ section-a > h1 {
 /*List items*/
 
 #updateList {
-    background-color: darkred;
+    background-color: #96c9e3;
     color: white;
-    border: 1px solid darkred;
+    border: 1px solid #96c9e3;
     border-radius: 3px;
 }
 
@@ -178,9 +201,9 @@ section-a > h1 {
 }
 
 #newItem {
-    background-color: darkred;
+    background-color: #96c9e3;
     color: white;
-    border: 1px solid darkred;
+    border: 1px solid #96c9e3;
     border-radius: 3px;
 }
 
@@ -191,6 +214,39 @@ section-a > h1 {
 #inputItem {
     border: 1px solid lightgrey; 
     border-radius: 3px;
+}
+
+#updateItem {
+    background-color: #96c9e3;
+    color: white;
+    border: 1px solid #96c9e3;
+    border-radius: 3px;
+}
+
+#deleteItem {
+    background-color: darkred;
+    color: white;
+    border: 1px solid darkred;
+    border-radius: 3px;
+}
+
+#deleteItem:hover {
+    background-color: lightcoral;
+}
+
+#togglePublic {
+    background-color: #96c9e3;
+    color: white;
+    border: 1px solid white;
+    border-radius: 3px;
+}
+
+#togglePublic:hover{
+    background-color: lightcoral;
+}
+
+#updateItem:hover {
+    background-color: lightcoral;
 }
 
 
@@ -225,14 +281,20 @@ section-a > h1 {
 }
 
 @media (max-width: 700px) {
-    .updateDelete {
+    .listItems {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 50% 50%;
     }
 }
 
 @media (max-width: 700px) {
-    h1 {
+    #taskPlanner {
+        text-align: left;
+    }
+}
+
+@media (max-width: 700px) {
+    #updateUser {
         text-align: left;
     }
 }

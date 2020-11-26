@@ -13,11 +13,7 @@
     <header>
         <h1 id="listNameHeader"></h1>
 
-        <div class="updateDelete">
-            <input type="text" id="listName">
-            <button id="updateList">Update list</button>
-            <button id="deleteList">Delete list</button>
-        </div>
+
         <button id="togglePublic">Toggle Public</button>
         <p id="publicStatus"></p>
 
@@ -28,11 +24,28 @@
                 <button onclick="updateuUser()">Update user</button>
             </div>
         </div>
+        
+        
+
+
 
     </header>
     <hr>
-    <input type="text" id="inputItem">
-    <button id="newItem">New Item</button>
+
+
+    <div class="listItems">
+      <input type="text" id="listName">
+      <button id="updateList">Update list name</button>
+      <input type="text" id="inputItem">
+       <button id="newItem">New Item</button>
+      <input type="text" id="inputItem">
+      <button id="updateItem">Update Item</button>
+    </div>
+
+    <p id="activeItem">Selected item:</p>
+    
+    <button id="deleteItem">Delete Item</button>
+    <button id="deleteList">Delete list</button>
 
     <input type="text" id="inputItemUpdate">
     <button id="updateItem">Update Item</button>
