@@ -21,6 +21,7 @@ server.listen(server.get('port'), function () {
 
 
 //Users
+
 server.post("/user", async function (req, res){
     const newUser = new user(req.body.username, req.body.password);
     const response = await newUser.create();
