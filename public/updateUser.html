@@ -18,7 +18,7 @@
             <button id="user" class="dropbtn"></button>
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
-                <button onclick="list()">Lists</button>
+                <button onclick="taskPlanner()">TaskPlanner</button>
             </div>
 
     </header>
@@ -55,8 +55,12 @@
     let randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerHTML = greetings[randomGreet] + logindata.username;
 
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
-    function list() {
+    function taskPlanner() {
         location.href = "./tasks.html";
     }
 
