@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My document</title>
+    <title>List items</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
@@ -22,6 +22,7 @@
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
                 <button onclick="updateuUser()">Update user</button>
+                <button onclick="taskPlanner()">Task Planner</button>
             </div>
         </div>
         
@@ -70,7 +71,10 @@
     const logindata = JSON.parse(logindataJson);
     const logindataString = JSON.stringify(logindata.token);
     
-    const listDataJson = localStorage.getItem("listData");
+    let listDataJson = localStorage.getItem("listData");
+    if (listDataJson === null) {
+        listDataJson = '{"listGroupsId":"null"}';
+    }
     const listData = JSON.parse(listDataJson);
     const listGroupsId = JSON.stringify(listData.listGroupsId);
 
@@ -79,10 +83,20 @@
     const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
-
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
     let listItemsId = null; 
 
+    function taskPlanner() {
+        location.href = "./tasks.html";
+    }
+
+    function updateuUser() {
+        location.href = "./updateUser.html";
+    }
     
 
     //henter inn list items 
