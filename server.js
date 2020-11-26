@@ -62,8 +62,12 @@ server.put("/user/updateUsername", authenticator, async function (req, res){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
-    await database.updateUser(req.body.username, usersId);
-    res.status(200).json({msg:"Username updated"}).end();
+    let list = await database.updateUser(req.body.username, usersId);
+    if (list === true){
+        res.status(200).json({msg:"Username updated"}).end();
+    }else {
+        res.status(400).json({msg:"Username already exists"}).end();
+    }
     }
 });
 
