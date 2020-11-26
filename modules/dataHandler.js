@@ -18,23 +18,23 @@ class StorageHandler {
         try {
             await client.connect();
             usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
-            client.end();
-            if (usernamesDB.rows.length > 0) {
-                return false; 
-            } else {
-                await client.connect();
+
+            if (usernamesDB.rows.length === 0) {  
                 results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password])
-                client.end();
-                return results; 
             }
-            
+            client.end(); 
             
         } catch (err) {
             client.end();
             console.log(err);
             results = err;
         }
-        return results;
+        if(usernamesDB.rows.length > 0){
+           return false;  
+        }else{
+            return results;
+        }
+        
     }
     async loginUser(username, password) {
         const client = new pg.Client(this.credentials);
@@ -58,15 +58,25 @@ class StorageHandler {
     }
     async updateUser(username, usersId) {
         const client = new pg.Client(this.credentials);
+        let usernamesDB = null; 
         let results = null;
         try {
             await client.connect();
+            usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
+
+            if (usernamesDB.rows.length === 0) { 
             results = await client.query('UPDATE "public"."tUsers" SET "username" = $1 WHERE "usersId" = $2', [username, usersId])
+            }
             client.end();
         } catch (err) {
             client.end();
             console.log(err);
-            results = err;
+            results = err;    
+        }
+        if (usernamesDB.rows.length > 0){
+            return false; 
+        }else {
+            return true; 
         }
     }
     async updatePassword(password, usersId) {
