@@ -23,8 +23,8 @@ class StorageHandler {
                 return false; 
             } else {
                 results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password])
-
                 client.end();
+                return results; 
             }
 
         } catch (err) {
@@ -175,8 +175,8 @@ class StorageHandler {
     
         try {
             await client.connect();
-            items = await client.query('DELETE FROM "public"."tItems" WHERE "listGroupsId" = $1 AND "usersId = $2', [listGroupsId, usersId])
-            results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1 AND "usersId = $2', [listGroupsId, usersId])
+            items = await client.query('DELETE FROM "public"."tItems" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
+            results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
 
         } catch (err) {
             client.end();
@@ -186,20 +186,24 @@ class StorageHandler {
     }
     async listItemName(listGroupsId) {
         const client = new pg.Client(this.credentials);
-        let results = null;
+        let items = null;
+        let list = null; 
         try {
             await client.connect();
-            results = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId])
+            list = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1', [listGroupsId])
+            items = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId])
 
         } catch (err) {
             client.end();
             console.log(err);
-            results = err;
+            result = err;
         }
-        if (results.rows.length > 0) {
-            return results.rows
+        console.log()
+        let result = {list: list.rows,items: items.rows}; 
+        if (list.rows.length > 0) {
+            return result;
         } else {
-            return null;
+            return false;
         }
     }
     async listItemAdd(itemName, listGroupsId, usersId) {
@@ -292,11 +296,12 @@ class StorageHandler {
                 resultList = await client.query('UPDATE "public"."tLists" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }
                 checkPublicItems = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
+            if (checkPublicItems.rows.length > 0) {
             if (checkPublicItems.rows[0].public===0){
                 resultList = await client.query('UPDATE "public"."tItems" SET "public" = 1 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }else{
                 resultList = await client.query('UPDATE "public"."tItems" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            }
+            }}
         } catch (err) {
             client.end();
             console.log(err);
@@ -304,9 +309,9 @@ class StorageHandler {
             resultItems = err;
         }
         if (checkPublicLists.rows[0].public===0){
-            return {msg:"List is public"}
-        } else {
             return {msg:"List is private"}
+        } else {
+            return {msg:"List is public"}
         }
     }
 }

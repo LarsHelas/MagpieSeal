@@ -8,6 +8,9 @@ const authenticator = require('./modules/auth');
 
 const server = express(); 
 
+
+
+
 server.set('port', (process.env.PORT || 8080));
 server.use(express.static('public'));
 server.use(bodyParser.json());
@@ -20,8 +23,8 @@ server.listen(server.get('port'), function () {
 //Users
 server.post("/user", async function (req, res){
     const newUser = new user(req.body.username, req.body.password);
-    await newUser.create();
-    if (response == null) {
+    const response = await newUser.create();
+    if (response == false) {
         res.status(400).json({msg:"Username already exists"}).end();
     }else {
         res.status(200).json({msg:"Ok"}).end();
@@ -31,16 +34,16 @@ server.post("/user", async function (req, res){
 
 server.post("/user/login", async function (req, res){
     const userLogin = new user(req.body.username, req.body.password);
-    let response = await userLogin.login();
-    let headerValue = {
+    const response = await userLogin.login();
+    const headerValue = {
         "alg": "HS256",
         "typ": "JWT"
         };
-     let payloadValue = {
+     const payloadValue = {
         "userId": response
      };
-    let token = new Token(headerValue, payloadValue);
-    let data = {
+    const token = new Token(headerValue, payloadValue);
+    const data = {
         "username": userLogin.username,
         "token": token
     };
@@ -118,7 +121,7 @@ server.put("/tasks/updateLists", authenticator, async function (req, res){
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
-    await database.listUpdate(req.body.listTitle, req.body.listGroupsId, usersId);
+    await database.listUpdate(req.body.listName, req.body.listGroupsId, usersId);
     res.status(200).json({msg:"List updated!"}).end();
     }
 });
@@ -135,17 +138,17 @@ server.delete("/tasks/deleteLists", authenticator, async function (req, res){
 });
 
 //List items
-server.get("/tasks/items", authenticator, async function (req, res){ 
+server.post("/tasks/items", authenticator, async function (req, res){ 
     const result = res.locals.result;
     if (result === true){
-        const list = await database.listItemsName(req.body.listGroupsId);
-        res.status(200).json(list)
+        const list = await database.listItemName(req.body.listGroupsId);
+        res.status(200).json(list).end();
     }else if(result === false) {
-        res.status(403).json({msg:"Bad token"})
+        res.status(403).json({msg:"Bad token"}).end();
     }
 });
 
-server.post("/tasks/items", authenticator, async function (req, res){
+server.post("/tasks/addListItem", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -167,7 +170,7 @@ server.put("/tasks/updateListItems", authenticator, async function (req, res){
     }
 });
 
-server.post("/tasks/deleteListItems", authenticator, async function (req, res){
+server.delete("/tasks/deleteListItems", authenticator, async function (req, res){
     const result = res.locals.result;
     if(result===true){
     const token = JSON.parse(req.headers.authorization);
@@ -184,8 +187,19 @@ server.delete("/tasks/deleteListItems", authenticator, async function (req, res)
     const token = JSON.parse(req.headers.authorization);
     const payload = new PayloadInfo(token.payload)  
     const usersId = payload.id();
-    const result = await database.listItemDelete(req.body.listGroupsId, usersId);
-    res.status(200).json(result).end();
+    await database.listItemDelete(req.body.listGroupsId, usersId);
+    res.status(200).json({msg:"list item deleted"}).end();
+    }
+});
+
+server.put("/tasks/togglePublic", authenticator, async function (req, res){
+    const result = res.locals.result;
+    if(result===true){
+        const token = JSON.parse(req.headers.authorization);
+        const payload = new PayloadInfo(token.payload)  
+        const usersId = payload.id();
+        const result = await database.publicToggle(req.body.listGroupsId, usersId);
+        res.status(200).json(result).end();
     }
 });
 
@@ -200,7 +214,7 @@ server.get("/public", authenticator, async function (req, res){
     }
 });
 
-server.get("/public/tasks", authenticator, async function (req, res){ 
+server.post("/public/tasks", authenticator, async function (req, res){ 
     const result = res.locals.result;
     if (result === true){
         const list = await database.publicListItems(req.body.listGroupsId);

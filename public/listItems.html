@@ -1,118 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My document</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
 
-<header>
-<h1>Reminder:</h1>
-<p id="user"></p>
-<input type="text" id="username">
-<button id="update">Update list</button>
-<button id="delete">Delete list</button>
-</header>
-<hr>
+    <header>
+        <h1 id="listNameHeader"></h1>
+
+        <div class="updateDelete">
+            <input type="text" id="listName">
+            <button id="updateList">Update list</button>
+            <button id="deleteList">Delete list</button>
+        </div>
+        <button id="togglePublic">Toggle Public</button>
+        <p id="publicStatus"></p>
+
+        <div class="dropdown">
+            <button id="user" class="dropbtn"></button>
+            <div class="dropdown-content">
+                <button onclick="logout()">Logout</button>
+                <button onclick="updateuUser()">Update user</button>
+            </div>
+        </div>
+
+    </header>
+    <hr>
+    <input type="text" id="inputItem">
+    <button id="newItem">New Item</button>
+
+    <input type="text" id="inputItemUpdate">
+    <button id="updateItem">Update Item</button>
+    <button id="deleteItem">Delete Item</button>
+    <p id="activeItem">Selected item:</p>
+
+
+    <div id="container"></div>
+
+
 
 </body>
 
 
 <script>
-
-const user = document.getElementById("user");
-
-
-let logindataJson = localStorage.getItem("logindata");
-if (logindataJson === null){
-    logindataJson = '{"token":"null"}';
-}
-let logindata = JSON.parse(logindataJson);
-let logindataString = JSON.stringify(logindata.token);
-
-//Viser hvem som er logget inn
-let greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei "]; 
-let randomGreet = Math.floor(Math.random()*greetings.length);
-user.innerHTML = greetings[randomGreet] + logindata.username; 
+    //DOM
+    const user = document.getElementById("user");
+    const listName = document.getElementById("listName");
+    const listNameHeader = document.getElementById("listNameHeader");
+    const inputItem = document.getElementById("inputItem");
+    const activeItem = document.getElementById("activeItem");
+    const inputItemUpdate = document.getElementById("inputItemUpdate");
+    const publicStatus = document.getElementById("publicStatus");
 
 
-
-
-loadData();
-async function loadData() {
-        
- 
-         let config = {
-             method: "GET",
-             headers:{
-                 "authorization": logindataString
-             }
-         }
-         
-         try {
-             let response = await fetch("/tasks/items", config);
-             let data = await response.json();
-
-
-
-             console.log(data);   
-             }
-         catch(err) {
-             console.log("Noe gitt galt");
-        }
-}
-
-
-document.getElementById("update").onclick = async function(evt) {
-
-    let body = {
-        listTitle: "updated",
-        listGroupsId: 5
+    let logindataJson = localStorage.getItem("logindata");
+    if (logindataJson === null) {
+        logindataJson = '{"token":"null"}';
     }
-    let config = {
-        method: "POST",
-        headers:{
-            "content-type": "application/json",
-        },
-        body: JSON.stringify(body)
-    }
+    const logindata = JSON.parse(logindataJson);
+    const logindataString = JSON.stringify(logindata.token);
+
+    //Viser hvem som er logget inn
+    const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
+    const randomGreet = Math.floor(Math.random() * greetings.length);
+    user.innerText = greetings[randomGreet] + logindata.username;
+
+    const listDataJson = localStorage.getItem("listData");
+    const listData = JSON.parse(listDataJson);
+    const listGroupsId = JSON.stringify(listData.listGroupsId);
+
+    let listItemsId = null; 
+
     
-    try {
-        let response = await fetch("/tasks/updateLists", config);
-        let data = await response.json();
-        
-        console.log(data);   
+
+    //henter inn list items 
+    loadData();
+    async function loadData() {
+
+
+        let body = {
+            listGroupsId: listGroupsId
         }
-    catch(err) {
-        console.log("Noe gitt galt...")
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/items", config);
+            let data = await response.json();
+            if (response.status === 403) {
+                location.href = "./userLogin.html";
+            }
+            if (data.list[0].public === 0){
+            publicStatus.innerText = "List is private"
+            }else {
+                publicStatus.innerText = "List is public"
+            }
+            listNameHeader.innerText = data.list[0].listName;
+            for (let value of data.items) {
+                let listDiv = document.createElement("div");
+                let html = `
+                        <h2>${value.itemName}</h2>                       
+                    `;
+
+                listDiv.innerHTML = html;
+                container.appendChild(listDiv);
+
+                listDiv.addEventListener('click', function (evt) {
+                    listItemsId = value.listItemsId; 
+                    activeItem.innerText = "Selected item: " + value.itemName;
+                });
+            }
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+       
     }
-}
 
-document.getElementById("delete").onclick = async function(evt) {
+    //oppdatere lister
+    document.getElementById("updateList").onclick = async function (evt) {
+        if (listName.value.length <= 0) {
+            alert("Must type in title");
+            return;
+        }
+        let body = {
+            listName: listName.value,
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
 
-let body = {
-    listGroupsId: 6
-}
-let config = {
-    method: "POST",
-    headers:{
-        "content-type": "application/json",
-    },
-    body: JSON.stringify(body)
-}
+        try {
+            let response = await fetch("/tasks/updateLists", config);
+            let data = await response.json();
 
-try {
-    let response = await fetch("/tasks/deleteLists", config);
-    let data = await response.json();
-    
-    console.log(data);   
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
     }
-catch(err) {
-    console.log("Noe gitt galt...")
-}
-}
+
+    //slette lister
+    document.getElementById("deleteList").onclick = async function (evt) {
+
+        let body = {
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "DELETE",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/deleteLists", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+    }
+
+    //Add list item
+    document.getElementById("newItem").onclick = async function (evt) {
+        if(inputItem.value <= 0){
+            alert("Must type inn item")
+            return; 
+        }
+        let body = {
+            itemName: inputItem.value,
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/addListItem", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    //Oppdater item
+    document.getElementById("updateItem").onclick = async function (evt) {
+        if(inputItemUpdate.value <= 0 || listItemsId === null){
+            alert("Must type inn item name and select an item to update")
+            return; 
+        }
+        let body = {
+            itemName: inputItemUpdate.value,
+            listItemsId: listItemsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/updateListItems", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    document.getElementById("deleteItem").onclick = async function (evt) {
+        if(listItemsId === null){
+            alert("Must select an item to delete")
+            return; 
+        }
+        let body = {
+            listItemsId: listItemsId
+        }
+        let config = {
+            method: "DELETE",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/deleteListItems", config);
+            let data = await response.json();
+
+            console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
+    document.getElementById("togglePublic").onclick = async function (evt) {
+        let body = {
+            listGroupsId: listGroupsId
+        }
+        let config = {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json",
+                "authorization": logindataString
+            },
+            body: JSON.stringify(body)
+        }
+
+        try {
+            let response = await fetch("/tasks/togglePublic", config);
+            let data = await response.json();
+            publicStatus.innerText = data.msg; 
+            //console.log(data);
+        }
+        catch (err) {
+            console.log("Something went wrong.")
+        }
+        window.location.reload();
+    }
+
 </script>
 
 
