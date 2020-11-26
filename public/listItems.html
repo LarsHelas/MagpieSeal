@@ -83,12 +83,12 @@
     const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
+
     function logout() {
         localStorage.clear();
         window.location.reload();
     }
 
-    let listItemsId = null; 
 
     function taskPlanner() {
         location.href = "./tasks.html";
@@ -98,6 +98,10 @@
         location.href = "./updateUser.html";
     }
     
+
+
+    let listItemsId = null; 
+
 
     //henter inn list items 
     loadData();

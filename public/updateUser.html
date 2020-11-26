@@ -76,7 +76,6 @@
         try {
             let response = await fetch("/tasks", config);
             let data = await response.json();
-            console.log(data)
             if (response.status === 403) {
                 location.href = "./userLogin.html";
             }
@@ -88,7 +87,7 @@
 
     document.getElementById("username").onclick = async function (evt) {
 
-        if (newUsername.value.length <= 3) {
+        if (newUsername.value.length < 3) {
             alert("Username must be at least 3 digits long");
             return;
         }
@@ -108,15 +107,17 @@
             let response = await fetch("/user/updateUsername", config);
             let data = await response.json();
             if (response.status === 200) {
-                respTxt.innerText = "Username updated"
+                respTxt.innerText = data.msg; 
                 logindata['username'] = newUsername.value;
                 localStorage.setItem('logindata', JSON.stringify(logindata));
+                user.innerText = newUsername.value; 
+            } else if (response.status === 400) {
+                respTxt.innerText = data.msg; 
             }
         }
         catch (err) {
             console.log("Something went wrong.")
         }
-        window.location.reload();
     }
 
     document.getElementById("password").onclick = async function (evt) {
@@ -147,34 +148,28 @@
         catch (err) {
             console.log("Something went wrong.")
         }
-        window.location.reload();
     }
 
-    document.getElementById("password").onclick = async function (evt) {
+    document.getElementById("delete").onclick = async function (evt) {
 
-        let body = {
-            password: newPassword.value
-        }
         let config = {
-            method: "PUT",
+            method: "DELETE",
             headers: {
                 "content-type": "application/json",
                 "authorization": logindataString
-            },
-            body: JSON.stringify(body)
+            }
         }
 
         try {
-            let response = await fetch("/user/updatePassword", config);
+            let response = await fetch("/user/deleteUser", config);
             let data = await response.json();
             if (response.status === 200) {
-                respTxt.innerText = "Password updated"
+                location.href = "./index.html";
             }
         }
         catch (err) {
             console.log("Something went wrong.")
         }
-        window.location.reload();
     }
 
 </script>
