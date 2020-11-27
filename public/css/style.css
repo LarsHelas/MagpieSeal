@@ -298,3 +298,11 @@ section-a > h1 {
         text-align: left;
     }
 }
+
+.truncate {
+    width:250px;
+    text-overflow: ellipsis;
+    /*BOTH of the following are required for text-overflow (overflow: hidden; and white-space: nowrap;)*/
+    overflow: hidden;
+    white-space: nowrap;
+  }
