@@ -18,7 +18,8 @@
             <button id="user" class="dropbtn"></button>
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
-                <button onclick="taskPlanner()">TaskPlanner</button>
+                <button onclick="publicList()">Public list</button>
+                <button onclick="privateList()">Private list</button>
             </div>
 
     </header>
@@ -60,9 +61,13 @@
         window.location.reload();
     }
 
-    function taskPlanner() {
+    function privateList() {
         location.href = "./tasks.html";
     }
+
+    function publicList() {
+        location.href = "./public.html";
+    } 
 
     loadData();
     async function loadData() {

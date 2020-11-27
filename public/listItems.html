@@ -22,7 +22,8 @@
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
                 <button onclick="updateuUser()">Update user</button>
-                <button onclick="taskPlanner()">Task Planner</button>
+                <button onclick="publicList()">Public list</button>
+                <button onclick="privateList()">Private list</button>
             </div>
         </div>
 
@@ -89,13 +90,19 @@
     }
 
 
-    function taskPlanner() {
+    function privateList() {
         location.href = "./tasks.html";
     }
 
     function updateuUser() {
         location.href = "./updateUser.html";
     }
+
+
+    function publicList() {
+        location.href = "./public.html";
+    } 
+    
 
 
 

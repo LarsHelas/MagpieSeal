@@ -17,6 +17,7 @@
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
                 <button onclick="updateuUser()">Update user</button>
+                <button onclick="privateList()">Private list</button>
             </div>
         </div>
 
@@ -59,6 +60,10 @@
 
     function updateuUser() {
         location.href = "./updateUser.html";
+    }
+
+    function privateList() {
+        location.href = "./tasks.html";
     }
 
     window.addEventListener("pageshow", function (event) {
