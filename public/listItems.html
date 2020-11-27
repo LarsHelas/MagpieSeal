@@ -111,8 +111,8 @@
 
     function publicList() {
         location.href = "./public.html";
-    } 
-    
+    }
+
 
 
 
@@ -168,6 +168,11 @@
                         <button>Update</button>  
                     `
 
+                    function toggleText() {
+                        listDiv.classList.toggle("truncate");
+                    }
+                    toggleText();
+
                     listDiv.innerHTML = list;
                     btnDiv.innerHTML = button;
                     subDiv.innerHTML = submit;
@@ -206,7 +211,7 @@
                     });
 
                     subDiv.addEventListener('click', async function (evt) {
-                        if (newInp.value <= 0 ) {
+                        if (newInp.value <= 0) {
                             alert("Must type inn item name")
                             return;
                         }
@@ -235,6 +240,7 @@
                         window.location.reload();
                     });
                     listDiv.addEventListener('click', function (evt) {
+                        toggleText();
                         listItemsId = value.listItemsId;
                         activeItem.innerText = "Selected item: " + value.itemName;
                     });
