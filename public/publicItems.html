@@ -18,6 +18,8 @@
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
                 <button onclick="updateuUser()">Update user</button>
+                <button onclick="publicList()">Public list</button>
+                <button onclick="privateList()">Private list</button>
             </div>
         </div>
 
@@ -48,10 +50,27 @@
     const listData = JSON.parse(listDataJson);
     const listGroupsId = JSON.stringify(listData.listGroupsId);
 
+    function privateList() {
+        location.href = "./tasks.html";
+    }
+
+    function publicList() {
+        location.href = "./public.html";
+    }
+
+    function updateuUser() {
+        location.href = "./updateUser.html";
+    }
+
     //Viser hvem som er logget inn
     const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
     const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
+
+    function logout() {
+        localStorage.clear();
+        window.location.reload();
+    }
 
     listNameHeader.innerText = listData.listName;
 

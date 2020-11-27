@@ -18,6 +18,7 @@
             <div class="dropdown-content">
                 <button onclick="logout()">Logout</button>
                 <button onclick="updateuUser()">Update user</button>
+                <button onclick="publicList()">Public list</button>
             </div>
         </div>
 
@@ -62,6 +63,10 @@
     function updateuUser() {
         location.href = "./updateUser.html";
     }
+
+    function publicList() {
+        location.href = "./public.html";
+    } 
 
     window.addEventListener("pageshow", function (event) {
         let historyCheck = (window.performance.navigation.type === 2);
