@@ -15,11 +15,9 @@ const authenticator = (req, res, next) => {
   .replace(/\//g, "_")
   
   if (signature===newSignature){
-      console.log("yes sirrrr")
       res.locals.result = true;
       next()
   }else{
-      console.log("no sirrrr")
       res.locals.result = false;
       next()
   }

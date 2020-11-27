@@ -26,10 +26,6 @@
             </div>
         </div>
 
-
-
-
-
     </header>
     <hr>
 
@@ -47,6 +43,8 @@
 
     <div id="itemsCont"></div>
     <div id="btnCont"></div>
+    <div id="inpCont"></div>
+    <div id="subCont"></div>
 
 </body>
 
@@ -62,6 +60,8 @@
     const publicStatus = document.getElementById("publicStatus");
     const itemsCont = document.getElementById("itemsCont");
     const btnCont = document.getElementById("btnCont");
+    const inpCont = document.getElementById("inpCont");
+    const subCont = document.getElementById("subCont");
 
     let logindataJson = localStorage.getItem("logindata");
     if (logindataJson === null) {
@@ -130,9 +130,14 @@
                 }
                 listNameHeader.innerText = data.list[0].listName;
                 for (let value of data.items) {
-                    let listDiv = document.createElement("div");
-                    let btnDiv = document.createElement("div");
-                  
+                    const listDiv = document.createElement("div");
+                    const btnDiv = document.createElement("div");
+                    const inpDiv = document.createElement("div");
+                    const subDiv = document.createElement("div");
+                    const newInp = document.createElement("input");
+                    const newBr = document.createElement("br")
+                    newInp.setAttribute("type", "text");
+
                     let list = `
                         <h2>${value.itemName}</h2>
                                               
@@ -140,10 +145,19 @@
                     let button = `
                         <button>X</button>                       
                     `;
+                    let submit = `
+                        <button>Update</button>  
+                    `
+
                     listDiv.innerHTML = list;
-                    btnDiv.innerHTML = button; 
+                    btnDiv.innerHTML = button;
+                    subDiv.innerHTML = submit;
                     itemsCont.appendChild(listDiv);
                     btnCont.appendChild(btnDiv);
+                    inpCont.appendChild(newInp);
+                    inpCont.appendChild(newBr);
+                    subCont.appendChild(subDiv);
+
 
                     btnDiv.addEventListener('click', async function (evt) {
                         let body = {
@@ -169,10 +183,40 @@
                         }
                         window.location.reload();
                     });
+
+                    subDiv.addEventListener('click', async function (evt) {
+                        if (newInp.value <= 0 ) {
+                            alert("Must type inn item name")
+                            return;
+                        }
+                        let body = {
+                            itemName: newInp.value,
+                            listItemsId: value.listItemsId
+                        }
+                        let config = {
+                            method: "PUT",
+                            headers: {
+                                "content-type": "application/json",
+                                "authorization": logindataString
+                            },
+                            body: JSON.stringify(body)
+                        }
+
+                        try {
+                            let response = await fetch("/tasks/updateListItems", config);
+                            let data = await response.json();
+
+                            console.log(data);
+                        }
+                        catch (err) {
+                            console.log("Something went wrong.")
+                        }
+                        window.location.reload();
+                    });
                     listDiv.addEventListener('click', function (evt) {
-                    listItemsId = value.listItemsId; 
-                    activeItem.innerText = "Selected item: " + value.itemName;
-                });
+                        listItemsId = value.listItemsId;
+                        activeItem.innerText = "Selected item: " + value.itemName;
+                    });
                 }
             }
             if (response.status === 403) {
@@ -306,34 +350,34 @@
         window.location.reload();
     }
 
-   /* document.getElementById("deleteItem").onclick = async function (evt) {
-        if (listItemsId === null) {
-            alert("Must select an item to delete")
-            return;
-        }
-        let body = {
-            listItemsId: listItemsId
-        }
-        let config = {
-            method: "DELETE",
-            headers: {
-                "content-type": "application/json",
-                "authorization": logindataString
-            },
-            body: JSON.stringify(body)
-        }
-
-        try {
-            let response = await fetch("/tasks/deleteListItems", config);
-            let data = await response.json();
-
-            console.log(data);
-        }
-        catch (err) {
-            console.log("Something went wrong.")
-        }
-        window.location.reload();
-    }*/
+    /* document.getElementById("deleteItem").onclick = async function (evt) {
+         if (listItemsId === null) {
+             alert("Must select an item to delete")
+             return;
+         }
+         let body = {
+             listItemsId: listItemsId
+         }
+         let config = {
+             method: "DELETE",
+             headers: {
+                 "content-type": "application/json",
+                 "authorization": logindataString
+             },
+             body: JSON.stringify(body)
+         }
+ 
+         try {
+             let response = await fetch("/tasks/deleteListItems", config);
+             let data = await response.json();
+ 
+             console.log(data);
+         }
+         catch (err) {
+             console.log("Something went wrong.")
+         }
+         window.location.reload();
+     }*/
 
     document.getElementById("togglePublic").onclick = async function (evt) {
         let body = {
