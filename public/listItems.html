@@ -45,7 +45,7 @@
         <input type="text" id="inputItemUpdate">
         <button id="updateItem">Update Item</button>
     </div>
-    <p id="activeItem">Selected item:</p>
+    <p class = "truncate" id="activeItem">Selected item:</p>
 
 <div class="grid-container">
     <div id="itemsCont"></div>
@@ -172,6 +172,8 @@
                         listDiv.classList.toggle("truncate");
                     }
                     toggleText();
+
+                    listDiv.classList.add("hoverItem");
 
                     listDiv.innerHTML = list;
                     btnDiv.innerHTML = button;

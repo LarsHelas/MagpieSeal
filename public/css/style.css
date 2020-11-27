@@ -246,14 +246,29 @@ section-a > h1 {
 }
 
 .grid-container {
+    width: 50%;
     display: inline-grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 50% 10% 30% 10%;
+}
+
+.hoverItem:hover{
+    color: lightcoral;
 }
 
 .toggle {
     display: inline-grid;
     grid-template-columns: 1fr 1fr;
 }
+
+
+
+.truncate {   
+    width:250px;
+    text-overflow: ellipsis;
+    /*BOTH of the following are required for text-overflow (overflow: hidden; and white-space: nowrap;)*/
+    overflow: hidden;
+    white-space: nowrap;
+  }
 
 
 
@@ -291,9 +306,11 @@ section-a > h1 {
         display: grid;
         grid-template-columns: 50% 50%;
     }
+
     #updateUser, #listNameHeader, #taskPlanner {
         text-align: left;
     }
+
     #inpCont, #subCont {
         display: none;
     }
@@ -302,15 +319,26 @@ section-a > h1 {
         display:inline-grid;
         grid-template-columns: 1fr 1fr;
     }
+
+    .grid-container {
+        width: 100%;
+        display: inline-grid;
+        grid-template-columns: 70% 30%;
+        text-align: center;
+    }
+
+}
+
+@media (min-width: 700px) and (max-width: 1300px) {
+    .grid-container {
+        width: 100%;
+        display: inline-grid;
+        grid-template-columns: 50% 10% 30% 10%;
+        text-align: center;
+    }
 }
 
 
 
 
-.truncate {
-    width:250px;
-    text-overflow: ellipsis;
-    /*BOTH of the following are required for text-overflow (overflow: hidden; and white-space: nowrap;)*/
-    overflow: hidden;
-    white-space: nowrap;
-  }
+
