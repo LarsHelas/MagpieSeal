@@ -16,9 +16,10 @@
         <div class="dropdown">
             <button id="user" class="dropbtn"></button>
             <div class="dropdown-content">
-                <button onclick="logout()">Logout</button>
-                <button onclick="updateuUser()">Update user</button>
+                <button onclick="updateUser()">Update user</button>
                 <button onclick="publicList()">Public list</button>
+                <button onclick="privateList()">Private list</button>
+                <button onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -60,13 +61,17 @@
         window.location.reload();
     }
 
-    function updateuUser() {
+    function updateUser() {
         location.href = "./updateUser.html";
     }
 
     function publicList() {
         location.href = "./public.html";
     } 
+
+    function privateList() {
+        location.href = "./tasks.html";
+    }
 
     window.addEventListener("pageshow", function (event) {
         let historyCheck = (window.performance.navigation.type === 2);
