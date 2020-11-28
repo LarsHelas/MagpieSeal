@@ -360,6 +360,9 @@ section-a > h1 {
         overflow: hidden;
         white-space: nowrap;
       }
+      h1 {
+          font-size: x-large;
+      }
 }
 
 @media (min-width: 1100px) and (max-width: 1700px) {
