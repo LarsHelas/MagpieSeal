@@ -170,9 +170,9 @@
                     toggleText();
 
                     list.classList.add("hoverItem");
-                    button.classList.add("block")
-                    newInp.classList.add("block")
-                    submit.classList.add("block")
+                    button.classList.add("block");
+                    newInp.classList.add("block");
+                    submit.classList.add("block");
                     list.classList.add("privateItemMargin")
                     
                   
@@ -254,7 +254,7 @@
 
     }
 
-    //oppdatere lister
+ 
     document.getElementById("updateList").onclick = async function (evt) {
         if (listName.value.length <= 0) {
             alert("Must type in title");
@@ -285,7 +285,7 @@
         window.location.reload();
     }
 
-    //slette lister
+ 
     document.getElementById("deleteList").onclick = async function (evt) {
 
         let body = {
@@ -312,7 +312,7 @@
         location.href = "./tasks.html"
     }
 
-    //Add list item
+   
     document.getElementById("newItem").onclick = async function (evt) {
         if (inputItem.value <= 0) {
             alert("Must type inn item")
@@ -343,7 +343,7 @@
         window.location.reload();
     }
 
-    //Oppdater item
+
     document.getElementById("updateItem").onclick = async function (evt) {
         if (inputItemUpdate.value <= 0 || listItemsId === null) {
             alert("Must type inn item name and select an item to update")
@@ -374,34 +374,6 @@
         window.location.reload();
     }
 
-    /* document.getElementById("deleteItem").onclick = async function (evt) {
-         if (listItemsId === null) {
-             alert("Must select an item to delete")
-             return;
-         }
-         let body = {
-             listItemsId: listItemsId
-         }
-         let config = {
-             method: "DELETE",
-             headers: {
-                 "content-type": "application/json",
-                 "authorization": logindataString
-             },
-             body: JSON.stringify(body)
-         }
- 
-         try {
-             let response = await fetch("/tasks/deleteListItems", config);
-             let data = await response.json();
- 
-             console.log(data);
-         }
-         catch (err) {
-             console.log("Something went wrong.")
-         }
-         window.location.reload();
-     }*/
 
     document.getElementById("togglePublic").onclick = async function (evt) {
         let body = {
