@@ -14,38 +14,47 @@
         <h1 id="listNameHeader"></h1>
 
 
-        <button id="togglePublic">Toggle Public</button>
-        <p id="publicStatus"></p>
+
 
         <div class="dropdown">
             <button id="user" class="dropbtn"></button>
             <div class="dropdown-content">
-                <button onclick="logout()">Logout</button>
-                <button onclick="updateuUser()">Update user</button>
+                <button onclick="updateUser()">Update user</button>
                 <button onclick="publicList()">Public list</button>
                 <button onclick="privateList()">Private list</button>
+                <button onclick="logout()">Logout</button>
             </div>
         </div>
 
     </header>
     <hr>
 
-    <input type="text" id="listName">
-    <button id="updateList">Update list name</button>
-    <button id="deleteList">Delete list</button>
+    <div class="toggle">
+    <button id="togglePublic">Toggle Public</button>
+    <p id="publicStatus"></p>
+</div>
+
+
+    
 
     <div class="listItems">
+        <input type="text" id="listName">
+        <button id="updateList">Update list name</button>
         <input type="text" id="inputItem">
         <button id="newItem">New Item</button>
         <input type="text" id="inputItemUpdate">
         <button id="updateItem">Update Item</button>
     </div>
-    <p id="activeItem">Selected item:</p>
+    <p class = "truncate" id="activeItem">Selected item:</p>
 
+<div class="grid-container">
     <div id="itemsCont"></div>
     <div id="btnCont"></div>
     <div id="inpCont"></div>
     <div id="subCont"></div>
+</div> 
+<br>
+<button id="deleteList">Delete list</button>
 
 </body>
 
@@ -63,6 +72,7 @@
     const btnCont = document.getElementById("btnCont");
     const inpCont = document.getElementById("inpCont");
     const subCont = document.getElementById("subCont");
+ 
 
     let logindataJson = localStorage.getItem("logindata");
     if (logindataJson === null) {
@@ -94,15 +104,15 @@
         location.href = "./tasks.html";
     }
 
-    function updateuUser() {
+    function updateUser() {
         location.href = "./updateUser.html";
     }
 
 
     function publicList() {
         location.href = "./public.html";
-    } 
-    
+    }
+
 
 
 
@@ -142,8 +152,10 @@
                     const inpDiv = document.createElement("div");
                     const subDiv = document.createElement("div");
                     const newInp = document.createElement("input");
-                    const newBr = document.createElement("br")
                     newInp.setAttribute("type", "text");
+                    const newBr = document.createElement("br")
+                   
+                    
 
                     let list = `
                         <h2>${value.itemName}</h2>
@@ -156,6 +168,13 @@
                         <button>Update</button>  
                     `
 
+                    function toggleText() {
+                        listDiv.classList.toggle("truncate");
+                    }
+                    toggleText();
+
+                    listDiv.classList.add("hoverItem");
+
                     listDiv.innerHTML = list;
                     btnDiv.innerHTML = button;
                     subDiv.innerHTML = submit;
@@ -164,6 +183,8 @@
                     inpCont.appendChild(newInp);
                     inpCont.appendChild(newBr);
                     subCont.appendChild(subDiv);
+                    
+
 
 
                     btnDiv.addEventListener('click', async function (evt) {
@@ -192,7 +213,7 @@
                     });
 
                     subDiv.addEventListener('click', async function (evt) {
-                        if (newInp.value <= 0 ) {
+                        if (newInp.value <= 0) {
                             alert("Must type inn item name")
                             return;
                         }
@@ -221,6 +242,7 @@
                         window.location.reload();
                     });
                     listDiv.addEventListener('click', function (evt) {
+                        toggleText();
                         listItemsId = value.listItemsId;
                         activeItem.innerText = "Selected item: " + value.itemName;
                     });
