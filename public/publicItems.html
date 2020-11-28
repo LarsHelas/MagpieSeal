@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My document</title>
+    <title>Public list</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
@@ -96,13 +96,22 @@
             let data = await response.json();
             if (response.status === 200) {
                 for (let value of data) {
-                    let listDiv = document.createElement("div");
-                    let html = `
-                        <h2>${value.itemName}</h2>                       
-                    `;
+                    const list = document.createElement("h2");
+                    const textNode = document.createTextNode(value.itemName);
+                    list.appendChild(textNode);
+                    
+                    container.appendChild(list);
 
-                    listDiv.innerHTML = html;
-                    container.appendChild(listDiv);
+                    function toggleText() {
+                        list.classList.toggle("truncate");
+                    }
+                    toggleText();
+                    list.classList.add("publicItemMargin")
+                    list.classList.add("hoverItem")
+
+                    list.addEventListener('click', function (evt) {
+                        toggleText();
+                    });
                 }
             } else if (response.status === 404) {
                 listNameHeader.innerText = data.msg;
