@@ -102,6 +102,7 @@
                         <h2>${value.listName}</h2>                       
                     `;
 
+                listDiv.classList.add("hoverItem");
                 listDiv.innerHTML = html;
                 container.appendChild(listDiv);
 
@@ -110,10 +111,9 @@
                     location.href = "./listItems.html"
                 });
             }
-            console.log(data);
         }
         catch (err) {
-            console.log("Something went wrong.");
+            
         }
     }
 

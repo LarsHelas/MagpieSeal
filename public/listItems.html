@@ -30,12 +30,12 @@
     <hr>
 
     <div class="toggle">
-    <button id="togglePublic">Toggle Public</button>
-    <p id="publicStatus"></p>
-</div>
+        <button id="togglePublic">Toggle Public</button>
+        <p id="publicStatus"></p>
+    </div>
 
 
-    
+
 
     <div class="listItems">
         <input type="text" id="listName">
@@ -45,16 +45,16 @@
         <input type="text" id="inputItemUpdate">
         <button id="updateItem">Update Item</button>
     </div>
-    <p class = "truncate" id="activeItem">Selected item:</p>
+    <p class="truncate" id="activeItem">Selected item:</p>
 
-<div class="grid-container">
-    <div id="itemsCont"></div>
-    <div id="btnCont"></div>
-    <div id="inpCont"></div>
-    <div id="subCont"></div>
-</div> 
-<br>
-<button id="deleteList">Delete list</button>
+    <div class="grid-container">
+        <div id="itemsCont"></div>
+        <div id="btnCont"></div>
+        <div id="inpCont"></div>
+        <div id="subCont"></div>
+    </div>
+    <br>
+    <button id="deleteList">Delete list</button>
 
 </body>
 
@@ -72,7 +72,7 @@
     const btnCont = document.getElementById("btnCont");
     const inpCont = document.getElementById("inpCont");
     const subCont = document.getElementById("subCont");
- 
+
 
     let logindataJson = localStorage.getItem("logindata");
     if (logindataJson === null) {
@@ -89,7 +89,7 @@
     const listGroupsId = JSON.stringify(listData.listGroupsId);
 
     //Viser hvem som er logget inn
-    const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "How you doing ", "Ay yo ", "Wassap ", "I see you ", "I'm watching you "];
+    const greetings = ["Hello ", "Howdy ", "Hey ", "Greetings ", "Welcome ", "Hiya ", "Ahoy ", "Bonjour ", "Hola ", "Aloha ", "Hai ", "Hei ", "Sup ", "Ay yo ", "Wassap ", "I see you" ];
     const randomGreet = Math.floor(Math.random() * greetings.length);
     user.innerText = greetings[randomGreet] + logindata.username;
 
@@ -147,47 +147,41 @@
                 }
                 listNameHeader.innerText = data.list[0].listName;
                 for (let value of data.items) {
-                    const listDiv = document.createElement("div");
-                    const btnDiv = document.createElement("div");
-                    const inpDiv = document.createElement("div");
-                    const subDiv = document.createElement("div");
+                    
+                    const list = document.createElement("h2");
+                    const textNode = document.createTextNode(value.itemName);
+                    list.appendChild(textNode);
+
+                    const button = document.createElement("button");
+                    const buttonNode = document.createTextNode("X");
+                    button.appendChild(buttonNode);
+                     
                     const newInp = document.createElement("input");
                     newInp.setAttribute("type", "text");
-                    const newBr = document.createElement("br")
-                   
-                    
+                    const newBr = document.createElement("br");
 
-                    let list = `
-                        <h2>${value.itemName}</h2>
-                                              
-                    `;
-                    let button = `
-                        <button>X</button>                       
-                    `;
-                    let submit = `
-                        <button>Update</button>  
-                    `
+                    const submit = document.createElement("button");
+                    const submitNode = document.createTextNode("Update");
+                    submit.appendChild(submitNode);
 
                     function toggleText() {
-                        listDiv.classList.toggle("truncate");
+                        list.classList.toggle("truncate");
                     }
                     toggleText();
 
-                    listDiv.classList.add("hoverItem");
-
-                    listDiv.innerHTML = list;
-                    btnDiv.innerHTML = button;
-                    subDiv.innerHTML = submit;
-                    itemsCont.appendChild(listDiv);
-                    btnCont.appendChild(btnDiv);
-                    inpCont.appendChild(newInp);
-                    inpCont.appendChild(newBr);
-                    subCont.appendChild(subDiv);
+                    list.classList.add("hoverItem");
+                    button.classList.add("block");
+                    newInp.classList.add("block");
+                    submit.classList.add("block");
+                    list.classList.add("privateItemMargin")
                     
+                  
+                    itemsCont.appendChild(list);
+                    btnCont.appendChild(button);
+                    inpCont.appendChild(newInp);
+                    subCont.appendChild(submit);
 
-
-
-                    btnDiv.addEventListener('click', async function (evt) {
+                    button.addEventListener('click', async function (evt) {
                         let body = {
                             listItemsId: value.listItemsId
                         }
@@ -212,7 +206,7 @@
                         window.location.reload();
                     });
 
-                    subDiv.addEventListener('click', async function (evt) {
+                    submit.addEventListener('click', async function (evt) {
                         if (newInp.value <= 0) {
                             alert("Must type inn item name")
                             return;
@@ -241,7 +235,7 @@
                         }
                         window.location.reload();
                     });
-                    listDiv.addEventListener('click', function (evt) {
+                    list.addEventListener('click', function (evt) {
                         toggleText();
                         listItemsId = value.listItemsId;
                         activeItem.innerText = "Selected item: " + value.itemName;
@@ -255,11 +249,12 @@
         }
         catch (err) {
             console.log("Something went wrong.")
+            location.href="./tasks.html";
         }
 
     }
 
-    //oppdatere lister
+ 
     document.getElementById("updateList").onclick = async function (evt) {
         if (listName.value.length <= 0) {
             alert("Must type in title");
@@ -290,7 +285,7 @@
         window.location.reload();
     }
 
-    //slette lister
+ 
     document.getElementById("deleteList").onclick = async function (evt) {
 
         let body = {
@@ -317,7 +312,7 @@
         location.href = "./tasks.html"
     }
 
-    //Add list item
+   
     document.getElementById("newItem").onclick = async function (evt) {
         if (inputItem.value <= 0) {
             alert("Must type inn item")
@@ -348,7 +343,7 @@
         window.location.reload();
     }
 
-    //Oppdater item
+
     document.getElementById("updateItem").onclick = async function (evt) {
         if (inputItemUpdate.value <= 0 || listItemsId === null) {
             alert("Must type inn item name and select an item to update")
@@ -379,34 +374,6 @@
         window.location.reload();
     }
 
-    /* document.getElementById("deleteItem").onclick = async function (evt) {
-         if (listItemsId === null) {
-             alert("Must select an item to delete")
-             return;
-         }
-         let body = {
-             listItemsId: listItemsId
-         }
-         let config = {
-             method: "DELETE",
-             headers: {
-                 "content-type": "application/json",
-                 "authorization": logindataString
-             },
-             body: JSON.stringify(body)
-         }
- 
-         try {
-             let response = await fetch("/tasks/deleteListItems", config);
-             let data = await response.json();
- 
-             console.log(data);
-         }
-         catch (err) {
-             console.log("Something went wrong.")
-         }
-         window.location.reload();
-     }*/
 
     document.getElementById("togglePublic").onclick = async function (evt) {
         let body = {
