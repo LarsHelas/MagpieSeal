@@ -25,7 +25,6 @@
             let response = await fetch("/user", config);
             let data = await response.json();
             if(response.status === 200){
-                respTxt.innerHTML = "User created";
                 location.href = "./userLogin.html";
             }else if(response.status === 400){
                 respTxt.innerHTML = "Username already exists";
