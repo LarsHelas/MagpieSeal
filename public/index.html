@@ -1,83 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create user</title>
     <link rel="stylesheet" href="./css/style.css">
-    
+
+
 </head>
+
 <body>
 
-<div class="login">
+    <div class="login">
 
-    <section-a>
-        <h1>Create an account</h1>
-    </section-a>
+        <section-a>
+            <h1>Create an account</h1>
+        </section-a>
 
-    <section>
-        <label for="username">Username:</label>
-        <input type="text" id="username">
-        <label for="pasword">Password:</label>
-        <input type="password" id="password">
-        <p id="respTxt"></p>
-        <button id="createUser">Create user</button>
-    </section>
-
-   
-    <a href="./userLogin.html">or login on existing user</a>
-</div>
+        <section>
+            <label for="username">Username:</label>
+            <input type="text" id="username">
+            <label for="pasword">Password:</label>
+            <input type="password" id="password">
+            <p id="respTxt"></p>
+            <button id="createUser">Create user</button>
+        </section>
 
 
+        <a href="./userLogin.html">or login on existing user</a>
+    </div>
+
+    <script type="text/javascript" src="./js/index.js"></script>
 </body>
-
-
-<script>
-
-    const usernameInp = document.getElementById("username");
-    const passwordInp = document.getElementById("password");
-    const respTxt = document.getElementById("respTxt");
-
-    document.getElementById("createUser").onclick = async function(evt) {
-
-        if(usernameInp.value.length < 3 || passwordInp.value.length < 6){
-            alert("Username must be at least 3 characters long and password at least 6.");
-            return;
-        }
-
-        let body = {
-            username: usernameInp.value,
-            password: passwordInp.value
-        }
-        let config = {
-            method: "POST",
-            headers:{
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(body)
-        }
-        
-        try {
-            let response = await fetch("/user", config);
-            let data = await response.json();
-            if(response.status === 200){
-                respTxt.innerHTML = "User created";
-                location.href = "./userLogin.html";
-            }else if(response.status === 400){
-                respTxt.innerHTML = "Username already exists";
-            }
-            console.log(response.status);   
-            }
-        catch(err) {
-            respTxt.innerHTML = "Something went wrong. Please try again."
-        }
-    }
-
-
-
-</script>
-
-
-
 
 </html>

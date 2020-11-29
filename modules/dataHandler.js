@@ -19,22 +19,22 @@ class StorageHandler {
             await client.connect();
             usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
 
-            if (usernamesDB.rows.length === 0) {  
+            if (usernamesDB.rows.length === 0) {
                 results = await client.query('INSERT INTO "public"."tUsers"("username", "password") VALUES($1, $2) RETURNING *;', [username, password])
             }
-            client.end(); 
-            
+            client.end();
+
         } catch (err) {
             client.end();
             console.log(err);
             results = err;
         }
-        if(usernamesDB.rows.length > 0){
-           return false;  
-        }else{
+        if (usernamesDB.rows.length > 0) {
+            return false;
+        } else {
             return results;
         }
-        
+
     }
     async loginUser(username, password) {
         const client = new pg.Client(this.credentials);
@@ -58,25 +58,25 @@ class StorageHandler {
     }
     async updateUser(username, usersId) {
         const client = new pg.Client(this.credentials);
-        let usernamesDB = null; 
+        let usernamesDB = null;
         let results = null;
         try {
             await client.connect();
             usernamesDB = await client.query('SELECT * FROM "public"."tUsers" WHERE username = $1', [username])
 
-            if (usernamesDB.rows.length === 0) { 
-            results = await client.query('UPDATE "public"."tUsers" SET "username" = $1 WHERE "usersId" = $2', [username, usersId])
+            if (usernamesDB.rows.length === 0) {
+                results = await client.query('UPDATE "public"."tUsers" SET "username" = $1 WHERE "usersId" = $2', [username, usersId])
             }
             client.end();
         } catch (err) {
             client.end();
             console.log(err);
-            results = err;    
+            results = err;
         }
-        if (usernamesDB.rows.length > 0){
-            return false; 
-        }else {
-            return true; 
+        if (usernamesDB.rows.length > 0) {
+            return false;
+        } else {
+            return true;
         }
     }
     async updatePassword(password, usersId) {
@@ -109,32 +109,32 @@ class StorageHandler {
             userLists = await client.query('SELECT* FROM "tLists" WHERE "usersId"= $1', [usersId]);
             userLists.rows.forEach(row => {
                 groupIDs.push(row.listGroupsId)
-                   
+
             });
-            if(groupIDs.length>0){
-            let listQuery = ''.concat('SELECT * FROM "tItems" WHERE "listGroupsId" IN (', groupIDs.toString(), ')'); // .ToString concats array values with comma - perfect for SQL :)
-            userItems = await client.query(listQuery);
-            userItems.rows.forEach(row => {
-                itemIDs.push(row.listItemsId)
-                
-            });
+            if (groupIDs.length > 0) {
+                let listQuery = ''.concat('SELECT * FROM "tItems" WHERE "listGroupsId" IN (', groupIDs.toString(), ')'); // .ToString concats array values with comma - perfect for SQL :)
+                userItems = await client.query(listQuery);
+                userItems.rows.forEach(row => {
+                    itemIDs.push(row.listItemsId)
+
+                });
             }
             // Delete all items
-            
-            if(itemIDs.length>0){
-            let itemDeleteQuery = ''.concat('DELETE FROM "public"."tItems" WHERE "listItemsId" IN (', itemIDs.toString(), ')');
-            deleteItems = await client.query(itemDeleteQuery);
-            
+
+            if (itemIDs.length > 0) {
+                let itemDeleteQuery = ''.concat('DELETE FROM "public"."tItems" WHERE "listItemsId" IN (', itemIDs.toString(), ')');
+                deleteItems = await client.query(itemDeleteQuery);
+
             }
             // Delete lists  
-            if(groupIDs.length>0){    
-            deleteLists = await client.query('DELETE FROM "tLists" WHERE "usersId"= $1', [usersId]);
+            if (groupIDs.length > 0) {
+                deleteLists = await client.query('DELETE FROM "tLists" WHERE "usersId"= $1', [usersId]);
             }
             // Destroy user
             deleteUser = await client.query('DELETE FROM "public"."tUsers" WHERE "usersId" = $1', [usersId]);
             client.end();
-        } 
-        
+        }
+
         catch (err) {
             client.end();
             console.log(err);
@@ -187,14 +187,14 @@ class StorageHandler {
     }
     async listDelete(listGroupsId, usersId) {
         const client = new pg.Client(this.credentials);
-        let items = null; 
+        let items = null;
         let results = null;
-    
+
         try {
             await client.connect();
             items = await client.query('DELETE FROM "public"."tItems" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             results = await client.query('DELETE FROM "public"."tLists" WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            client.end();    
+            client.end();
         } catch (err) {
             client.end();
             console.log(err);
@@ -204,7 +204,7 @@ class StorageHandler {
     async listItemName(listGroupsId) {
         const client = new pg.Client(this.credentials);
         let items = null;
-        let list = null; 
+        let list = null;
         try {
             await client.connect();
             list = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1', [listGroupsId])
@@ -216,7 +216,7 @@ class StorageHandler {
             result = err;
         }
         console.log()
-        let result = {list: list.rows,items: items.rows}; 
+        let result = { list: list.rows, items: items.rows };
         if (list.rows.length > 0) {
             return result;
         } else {
@@ -287,9 +287,9 @@ class StorageHandler {
         try {
             await client.connect();
             list = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1', [listGroupsId]);
-            if (list.rows[0].public === 1){
-            items = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId]);
-        }
+            if (list.rows[0].public === 1) {
+                items = await client.query('SELECT * FROM "public"."tItems" WHERE "tItems"."listGroupsId" = $1', [listGroupsId]);
+            }
             client.end();
         } catch (err) {
             client.end();
@@ -304,14 +304,14 @@ class StorageHandler {
     }
     async publicToggle(listGroupsId, usersId) {
         const client = new pg.Client(this.credentials);
-        let checkPublicLists = null; 
+        let checkPublicLists = null;
         let resultList = null;
         try {
             await client.connect();
-                checkPublicLists = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
-            if (checkPublicLists.rows[0].public===0){
+            checkPublicLists = await client.query('SELECT * FROM "public"."tLists" WHERE "tLists"."listGroupsId" = $1  AND "usersId" = $2', [listGroupsId, usersId])
+            if (checkPublicLists.rows[0].public === 0) {
                 resultList = await client.query('UPDATE "public"."tLists" SET "public" = 1 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
-            }else{
+            } else {
                 resultList = await client.query('UPDATE "public"."tLists" SET "public" = 0 WHERE "listGroupsId" = $1 AND "usersId" = $2', [listGroupsId, usersId])
             }
             client.end();
@@ -320,10 +320,10 @@ class StorageHandler {
             console.log(err);
             resultList = err;
         }
-        if (checkPublicLists.rows[0].public===0){
-            return {msg:"List is private"}
+        if (checkPublicLists.rows[0].public === 0) {
+            return { msg: "List is private" }
         } else {
-            return {msg:"List is public"}
+            return { msg: "List is public" }
         }
     }
 }
